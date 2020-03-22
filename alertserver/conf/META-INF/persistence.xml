@@ -1,0 +1,21 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+
+  <persistence-unit name="master" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <non-jta-data-source>DefaultDS</non-jta-data-source>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.format_sql" value="true"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.enable_lazy_load_no_trans" value="true" />
+      <property name="hibernate.archive.autodetection" value="class, hbm"/>      
+      <!-- <property name="hibernate.ejb.interceptor" value=" com.alnt.platform.base.interceptor.AuditLogInterceptor" /> 
+      <property name="hibernate.integrator_provider" value=" com.alnt.platform.base.interceptor.EventListenerIntegratorProvider" /> -->
+    </properties>
+  </persistence-unit>
+
+</persistence>

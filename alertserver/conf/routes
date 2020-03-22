@@ -1,0 +1,898 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+### NoDocs ###
++ noJwtFilter
++ nocsrf
+GET   /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
+
+### NoDocs ###
++ noJwtFilter
++ nocsrf
+GET   /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
+
++ noJwtFilter
++ nocsrf
+###
+ #  summary: Get Token 
+ #  tags:
+ #    - Authentication Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/UserData'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST     /api/auth/token                     com.alnt.platform.application.security.authentication.controller.AuthenticationController.login(request:Request)
+
+###
+ #  summary: Refresh Token 
+ #  tags:
+ #    - Authentication Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/TokenData'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST     /api/auth/refreshtoken              com.alnt.platform.application.security.authentication.controller.AuthenticationController.refreshToken(request:Request)
+
++ nocsrf
+###
+ #  summary: Check Token 
+ #  tags:
+ #    - Authentication Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/TokenData'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST     /api/auth/checktoken              com.alnt.platform.application.security.authentication.controller.AuthenticationController.checkToken(request:Request)
+
+
+###
+ #  summary: Upload File
+ #  tags:
+ #    - Binary Resource Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/File'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST   /api/binaryresource/upload      			com.alnt.platform.core.binaryresource.controller.BinaryResourceController.upload(request:Request)
+
++ nocsrf
+###
+ #  summary: Download File
+ #  tags:
+ #    - Binary Resource Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/binaryresource/download/:id         com.alnt.platform.core.binaryresource.controller.BinaryResourceController.download(request:Request,id:Long)
+
+POST    /api/binaryresource/delete/:id         com.alnt.platform.core.binaryresource.controller.BinaryResourceController.delete(request:Request,id:Long)
+
+
+
+###
+ #  summary: Find User
+ #  tags:
+ #    - User Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/find                com.alnt.access.user.controller.UserController.find(request:Request)
+
+###
+ #  summary: Save User
+ #  tags:
+ #    - User Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/UserDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/save                com.alnt.access.user.controller.UserController.save(request:Request)
+
+###
+ #  summary: Get User by id
+ #  tags:
+ #    - User Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/user/:id                  com.alnt.access.user.controller.UserController.get(request:Request,id:Long)
+
+###
+ #  summary: Find User by username
+ #  tags:
+ #    - User Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/UserName'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/getbyusername                  com.alnt.access.user.controller.UserController.getUserByName(request:Request)
+
+###
+ #  summary: Find Job Role
+ #  tags:
+ #    - Job Role Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/jobrole/find                com.alnt.access.jobrole.controller.JobRoleController.find(request:Request)
+
+###
+ #  summary: Save Role
+ #  tags:
+ #    - Job Role Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/RoleDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/jobrole/save                com.alnt.access.jobrole.controller.JobRoleController.save(request:Request)
+
+###
+ #  summary: Get Role by id
+ #  tags:
+ #    - Job Role Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/jobrole/:id                  com.alnt.access.jobrole.controller.JobRoleController.get(request:Request,id:Long)
+
+
+###
+ #  summary: Find Policy
+ #  tags:
+ #    - Policy Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/policy/find                com.alnt.policyengine.controller.PolicyController.find(request:Request)
+
+###
+ #  summary: Save Policy
+ #  tags:
+ #    - Policy Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/PolicyDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/policy/save                com.alnt.policyengine.controller.PolicyController.save(request:Request)
+
+###
+ #  summary: Get Policy
+ #  tags:
+ #    - Policy Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/policy/:id                  com.alnt.policyengine.controller.PolicyController.get(request:Request,id:Long)
+
+###
+ #  summary: Find Policy Group
+ #  tags:
+ #    - Policy Group Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/policygroup/find                com.alnt.policyengine.controller.PolicyGroupController.find(request:Request)
+
+###
+ #  summary: Save Policy Group
+ #  tags:
+ #    - Policy Group Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/PolicyGroupDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/policygroup/save                com.alnt.policyengine.controller.PolicyGroupController.save(request:Request)
+
+###
+ #  summary: Get Policy Group
+ #  tags:
+ #    - Policy Group Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/policygroup/:id                  com.alnt.policyengine.controller.PolicyGroupController.get(request:Request,id:Long)
+
+
+###
+ #  summary: Find Activity
+ #  tags:
+ #    - Risk Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/activity/find                com.alnt.platform.core.navigation.controller.ActivityController.find(request:Request)
+
+###
+ #  summary: Find Search Layout
+ #  tags:
+ #    - Search Layout Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/searchlayout/find                com.alnt.platform.core.navigation.controller.SearchLayoutController.find(request:Request)
+
+###
+ #  summary: Save Search Layout
+ #  tags:
+ #    - Search Layout Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/SearchLayoutDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/searchlayout/save                com.alnt.platform.core.navigation.controller.SearchLayoutController.save(request:Request)
+
+###
+ #  summary: Get Search Layout
+ #  tags:
+ #    - Search Layout Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/searchlayout/:id                  com.alnt.platform.core.navigation.controller.SearchLayoutController.get(request:Request,id:Long)
+
+###
+ #  summary: Find ClassDef
+ #  tags:
+ #    - ClassDef Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/classdef/find                com.alnt.platform.core.classdef.controller.ClassDefController.find(request:Request)
+
+###
+ #  summary: Save ClassDef
+ #  tags:
+ #    - ClassDef Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/ClassDefDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/classdef/save                com.alnt.platform.core.classdef.controller.ClassDefController.save(request:Request)
+
+###
+ #  summary: Get ClassDef
+ #  tags:
+ #    - ClassDef Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/classdef/:id                  com.alnt.platform.core.classdef.controller.ClassDefController.get(request:Request,id:Long)
+
+###
+ #  summary: Find List
+ #  tags:
+ #    - Lists Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/lists/find                com.alnt.platform.core.lists.controller.ListsController.find(request:Request)
+
+###
+ #  summary: Save List
+ #  tags:
+ #    - Lists Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/ListDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/lists/save                com.alnt.platform.core.lists.controller.ListsController.save(request:Request)
+###
+ #  summary: Get List By Id
+ #  tags:
+ #    - Lists Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/lists/:id                  com.alnt.platform.core.lists.controller.ListsController.get(request:Request,id:Long)
+
+###
+ #  summary: Find Messages
+ #  tags:
+ #    - Messages Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/messagelog/find                com.alnt.platform.core.messagemaster.controller.MessageLogController.find(request:Request)
+
+###
+ #  summary: Save Messages
+ #  tags:
+ #    - Messages Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/MessageLogDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/messagelog/save                com.alnt.platform.core.messagemaster.controller.MessageLogController.save(request:Request)
+
+###
+ #  summary: Get Messages
+ #  tags:
+ #    - Messages Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/messagelog/:id                  com.alnt.platform.core.messagemaster.controller.MessageLogController.get(request:Request,id:Long)
+
+### NoDocs ###
+POST    /api/policytype/find                com.alnt.policyengine.controller.PolicyTypeController.find(request:Request)
+### NoDocs ###
+POST    /api/policytype/save                com.alnt.policyengine.controller.PolicyTypeController.save(request:Request)
+### NoDocs ###
+GET    /api/policytype/:id                  com.alnt.policyengine.controller.PolicyTypeController.get(request:Request,id:Long)
+
+### NoDocs ###
+POST    /api/menu/find                com.alnt.platform.core.navigation.controller.MenuController.find(request:Request)
+### NoDocs ###
+POST    /api/menu/save                com.alnt.platform.core.navigation.controller.MenuController.save(request:Request)
+### NoDocs ###
+GET    /api/menu/:id                  com.alnt.platform.core.navigation.controller.MenuController.get(request:Request,id:Long)
+
+### NoDocs ###
+POST   /api/getmenuforuser           com.alnt.platform.core.navigation.controller.MenuController.getMenuForUser(request:Request)
+
+###
+ #  summary: Find Rule Set
+ #  tags:
+ #    - Rule Set Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/rule-set/find                com.alnt.policyengine.controller.RuleSetController.find(request:Request)
+
+###
+ #  summary: Save Rule Set
+ #  tags:
+ #    - Rule Set Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/RuleSetDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/rule-set/save                com.alnt.policyengine.controller.RuleSetController.save(request:Request)
+
+###
+ #  summary: Get Rule Set
+ #  tags:
+ #    - Rule Set Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/rule-set/:id                  com.alnt.policyengine.controller.RuleSetController.get(request:Request,id:Long)
+
+###
+ #  summary: Find Rule
+ #  tags:
+ #    - Rule Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/rule/find                com.alnt.policyengine.controller.RuleController.find(request:Request)
+
+###
+ #  summary: Save Rule
+ #  tags:
+ #    - Rule Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/RuleDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/rule/save                com.alnt.policyengine.controller.RuleController.save(request:Request)
+
+###
+ #  summary: Get Rule
+ #  tags:
+ #    - Rule Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/rule/:id                  com.alnt.policyengine.controller.RuleController.get(request:Request,id:Long)
+
+GET    /api/rule/extid/:id                  com.alnt.policyengine.controller.RuleController.getByExtId(request:Request,id:String)
+
+
+### Rule Excel upload ####
+POST   /api/rule/excel/upload         com.alnt.policyengine.controller.RuleController.uploadExcel(request:Request)
+
+###
+ #  summary: Execute Policy
+ #  tags:
+ #    - Policy Engine Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/RequestData'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST   /api/policyengine/execute        com.alnt.ruleengine.controller.RuleEngineController.postRequest(request:Request)
+POST   /api/policyengine/evaluateExpr   com.alnt.ruleengine.controller.RuleEngineController.evaluateExpr(request:Request)
+### NoDocs ###
+POST   /api/ruleengine/er           com.alnt.ruleengine.controller.RuleEngineController.evaluateRule(request:Request)
+
+
+###
+ #  summary: Find Response Action
+ #  tags:
+ #    - Response Action Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/responsecode/find                com.alnt.policyengine.controller.ResponseCodeController.find(request:Request)
+
+###
+ #  summary: Save Response Action
+ #  tags:
+ #    - Response Action Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/ResponseCodeDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/responsecode/save                com.alnt.policyengine.controller.ResponseCodeController.save(request:Request)
+
+###
+ #  summary: Get Response Action
+ #  tags:
+ #    - Response Action Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/responsecode/:id                  com.alnt.policyengine.controller.ResponseCodeController.get(request:Request,id:Long)
+
+### NoDocs ###
+POST    /api/attachment/find                com.alnt.platform.core.binaryresource.controller.AttachmentController.find(request:Request)
+### NoDocs ###
+POST    /api/attachment/save                com.alnt.platform.core.binaryresource.controller.AttachmentController.save(request:Request)
+### NoDocs ###
+GET    /api/attachment/:id                  com.alnt.platform.core.binaryresource.controller.AttachmentController.get(request:Request,id:Long)
+
+POST   /api/attachment/delete/:id           com.alnt.platform.core.binaryresource.controller.AttachmentController.delete(request:Request,id:Long)
+
+
+###
+ #  summary: Find Risk
+ #  tags:
+ #    - Risk Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/risk/find                com.alnt.policyengine.controller.RiskController.find(request:Request)
+
+###
+ #  summary: Save Risk
+ #  tags:
+ #    - Risk Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/RiskRuleDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/risk/save                com.alnt.policyengine.controller.RiskController.save(request:Request)
+
+###
+ #  summary: Get Risk
+ #  tags:
+ #    - Risk Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/risk/:id                  com.alnt.policyengine.controller.RiskController.get(request:Request,id:Long)
+
+GET    /api/risk/extid/:id                  com.alnt.policyengine.controller.RiskController.getByExtId(request:Request,id:String)
+
+###
+ #  summary: Find Mitigation Control
+ #  tags:
+ #    - Mitigation Control Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/mitigationcontrol/find                com.alnt.policyengine.controller.MitigationControlController.find(request:Request)
+
+###
+ #  summary: Save Mitigation Control
+ #  tags:
+ #    - Mitigation Control Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/MitigationControlDTO'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/mitigationcontrol/save                com.alnt.policyengine.controller.MitigationControlController.save(request:Request)
+
+###
+ #  summary: Get Mitigation Control
+ #  tags:
+ #    - Mitigation Control Endpoints
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+GET    /api/mitigationcontrol/:id                  com.alnt.policyengine.controller.MitigationControlController.get(request:Request,id:Long)
+
+GET    /api/mitigationcontrol/extid/:id                  com.alnt.policyengine.controller.MitigationControlController.getByExtId(request:Request,id:String)
+
+### NoDocs ###
+POST    /api/timeline/find                com.alnt.platform.core.timeline.controller.TimelineUIController.find(request:Request)
+### NoDocs ###
+GET    /api/timeline/:id                  com.alnt.platform.core.timeline.controller.TimelineUIController.get(request:Request,id:Long)
+
+###
+ #  summary: Find Currency
+ #  tags:
+ #    - Currency Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/currency/find                com.alnt.policyengine.controller.CurrencyController.list(request:Request)
+
+###
+ #  summary: Find Identity Roles
+ #  tags:
+ #    - Identity Role Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/identity/roles/find                com.alnt.identity.role.controller.IdentityRoleController.find(request:Request)
+
+
+
+###
+ #  summary: Find Identity Users
+ #  tags:
+ #    - Identity User Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/identity/users/find                com.alnt.identity.user.controller.IdentityUserController.find(request:Request)
+GET    /api/identity/users/:id                  com.alnt.identity.user.controller.IdentityUserController.get(request:Request,id:Long)
+
+
+
+###
+ #  summary: Find Identity User Group
+ #  tags:
+ #    - Identity User Group Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/identity/usergroups/find                com.alnt.identity.usergroup.controller.IdentityUserGroupController.find(request:Request)
+GET    /api/identity/usergroups/:id                  com.alnt.identity.usergroup.controller.IdentityUserGroupController.get(request:Request,id:Long)
+
+### NoDocs ###
+POST    /api/docnumber/generate                com.alnt.platform.core.docnumberrange.controller.DocNumberRangeController.getDocNumber(request:Request)
+### NoDocs ###
+POST    /api/docnumberrange/find                com.alnt.platform.core.docnumberrange.controller.DocNumberRangeController.find(request:Request)
+### NoDocs ###
+POST    /api/docnumberrange/save                com.alnt.platform.core.docnumberrange.controller.DocNumberRangeController.save(request:Request)
+### NoDocs ###
+GET    /api/docnumberrange/:id                  com.alnt.platform.core.docnumberrange.controller.DocNumberRangeController.get(request:Request,id:Long)
+
+
+### NoDocs ###
+GET    /api/getnewids                 com.alnt.platform.core.controller.UtilApisController.getNewIDs(request:Request)
+
+
+###
+ #  summary: Change Password 
+ #  tags:
+ #    - Change Password Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/changePassword            com.alnt.access.user.controller.UserController.changePassword(request:Request)
+
+###
+ #  summary: Approve Reset Password Request
+ #  tags:
+ #    -Approve Reset Password Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/approveResetPassword            com.alnt.access.user.controller.UserController.approveResetPasswordRequest(request:Request)
+
+
+###
+ #  summary: Reset Password 
+ #  tags:
+ #    - Reset Password Endpoints
+ #  parameters:
+ #    - name: body
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.request.SearchCriteria'
+ #  responses:
+ #    200:
+ #      description: success
+ #      schema:
+ #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
+ ###
+POST    /api/user/resetPassword            com.alnt.access.user.controller.UserController.resetPassword(request:Request)
