@@ -7,6 +7,7 @@ import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 import com.alnt.platform.base.presentation.JsonViews;
 import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonView(JsonViews.Combo.class)
 public class MitigationControlDTO extends BaseMasterDTO {
 
 	private static final long serialVersionUID = 1L;
