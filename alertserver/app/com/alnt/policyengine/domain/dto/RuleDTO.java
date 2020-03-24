@@ -31,7 +31,7 @@ public class RuleDTO extends BaseMasterDTO {
 	@JsonView(JsonViews.Medium.class)
 	private String riskId;
 
-	@JsonView(JsonViews.Header.class)
+	@JsonView(JsonViews.Medium.class)
 	private RiskDTO risk;
 
 	@JsonView(JsonViews.Header.class)

@@ -5,6 +5,7 @@ import com.alnt.platform.base.presentation.JsonViews;
 import com.alnt.platform.core.lists.domain.dto.ListEntriesDTO;
 import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonView(JsonViews.Header.class)
 public class ResponseCodeDTO extends BaseMasterDTO {
 
 	private static final long serialVersionUID = 1L;
