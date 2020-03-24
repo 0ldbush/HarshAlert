@@ -1,28 +1,5 @@
 package com.alnt.platform.application.security.authentication.controller;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import com.alnt.access.user.domain.dto.UserDTO;
 import com.alnt.access.user.service.UserService;
 import com.alnt.platform.application.security.hashing.HashUtils;
@@ -40,7 +17,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
-
 import play.Logger;
 import play.filters.csrf.AddCSRFToken;
 import play.libs.F;
@@ -49,6 +25,20 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+
+import javax.inject.Inject;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class AuthenticationController extends Controller {
 
@@ -270,6 +260,29 @@ public class AuthenticationController extends Controller {
 		Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
 		Matcher matcher = pattern.matcher(host);
 		return matcher.matches();	 
+	}
+
+	@AddCSRFToken
+	public CompletionStage<Result> resetPassword(Http.Request request) throws ExecutionException, InterruptedException {
+		RequestDetails requestDetails = new RequestDetails();
+		requestDetails.setTenantName(getTenant(request));
+		JsonNode body = request.body().asJson();
+		if (body!= null && body.hasNonNull("username") ) {
+			CompletionStage<Optional<UserDTO>> userGet = userService.getUserByName(requestDetails, body.get("username").asText());
+			Optional<UserDTO> userOpt = userGet.toCompletableFuture().get();
+			if (userOpt.isPresent()) {
+				requestDetails.setUser(userOpt.get());
+				return userService.resetPassword(requestDetails)
+						.thenApplyAsync(response -> {
+							return ok(Json.toJson(response));
+						}, ec.current());
+			}else {
+				throw new BaseBusinessException(ErrorType.USER_NOT_FOUND);
+			}
+		}else{
+			throw new BaseBusinessException(ErrorType.USER_NOT_FOUND);
+		}
+
 	}
 	
 }

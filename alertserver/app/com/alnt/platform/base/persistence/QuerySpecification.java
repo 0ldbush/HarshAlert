@@ -24,7 +24,7 @@ public class QuerySpecification<T> implements Specification<T> {
 	 * 
 	 */
 	private static final long serialVersionUID = -4655468686674499091L;
-	static final String[] DATE_FORMAT = {"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"};
+	static final String[] DATE_FORMAT = {"yyyy-MM-dd'T'HH:mm:ssZ","yyyy-MM-dd HH:mm:ss","yyyy-MM-dd"};
 	
 	private Criteria criteria;
 	private String asociationNames;	
