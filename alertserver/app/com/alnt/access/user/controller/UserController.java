@@ -1,11 +1,6 @@
 package com.alnt.access.user.controller;
 
 
-import java.util.List;
-import java.util.concurrent.CompletionStage;
-
-import javax.inject.Inject;
-
 import com.alnt.access.user.domain.User;
 import com.alnt.access.user.domain.dto.PasswordChangeDTO;
 import com.alnt.access.user.domain.dto.UserDTO;
@@ -14,13 +9,16 @@ import com.alnt.platform.base.controller.BaseController;
 import com.alnt.platform.base.response.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import play.Logger;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.CompletionStage;
 
 public class UserController extends BaseController<User, UserDTO> {
 
@@ -51,15 +49,7 @@ public class UserController extends BaseController<User, UserDTO> {
 		}, ec.current());
 
 	}
-	
-	public CompletionStage<Result> resetPassword(Http.Request request) {
-		return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
-				return ((UserService) getService()).resetPassword(requestDetails)
-						.thenApplyAsync(response -> {
-							return ok(Json.toJson(response));
-						}, ec.current());
-		},ec.current());
-	}
+
 
 	public CompletionStage<Result> approveResetPasswordRequest(Http.Request request) throws JsonProcessingException {
 		final List<UserDTO> userDTOs = Json.mapper().readValue(request.body().asJson().toString(),
