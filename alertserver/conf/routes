@@ -880,7 +880,8 @@ POST    /api/user/changePassword            com.alnt.access.user.controller.User
  ###
 POST    /api/user/approveResetPassword            com.alnt.access.user.controller.UserController.approveResetPasswordRequest(request:Request)
 
-
++ noJwtFilter
++ nocsrf
 ###
  #  summary: Reset Password 
  #  tags:
@@ -895,4 +896,4 @@ POST    /api/user/approveResetPassword            com.alnt.access.user.controlle
  #      schema:
  #        $ref: '#/definitions/com.alnt.platform.base.response.ApiResponse'
  ###
-POST    /api/user/resetPassword            com.alnt.access.user.controller.UserController.resetPassword(request:Request)
+POST     /api/auth/resetPassword              com.alnt.platform.application.security.authentication.controller.AuthenticationController.resetPassword(request:Request)

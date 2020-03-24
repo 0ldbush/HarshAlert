@@ -375,6 +375,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 			ruleDTO.setEnforcement(ruleExpressionDTO.getEnforcement());
 			ruleDTO.setCondition(condition);
 			ruleDTO.setConditionJson(conditionJson);
+			ruleDTO.setEntityId(ruleExpressionDTO.getEntityPrefix());
 			ruleDTOs.add(ruleDTO);
 			}
 			}catch (Exception e) {

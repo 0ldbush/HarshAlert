@@ -1,15 +1,15 @@
 package com.alnt.access.user.domain.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alnt.access.jobrole.domain.dto.JobRoleDTO;
 import com.alnt.platform.base.domain.dto.BaseDTO;
 import com.alnt.platform.base.presentation.JsonViews;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDTO extends BaseDTO{
 	
@@ -71,8 +71,7 @@ public class UserDTO extends BaseDTO{
     
 	@JsonView(JsonViews.Full.class)
     protected List<JobRoleDTO> roles = new ArrayList<JobRoleDTO>();
-	
-	@JsonIgnore
+
 	private Boolean resetPassword=false;
 
 	public String getUserName() {
