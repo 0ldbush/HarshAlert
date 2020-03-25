@@ -1,7 +1,5 @@
 package com.alnt.platform.core.lists.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -11,6 +9,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.alnt.platform.base.domain.BaseEntity;
 import com.alnt.platform.base.persistence.CacheConstants;
 
 /**
@@ -21,7 +20,7 @@ import com.alnt.platform.base.persistence.CacheConstants;
 @Table(name="LIST_ENTRIES", indexes = {
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region=CacheConstants.REGION_CONFIG_MODULE_ELEMENTS)
-public class ListEntries extends com.alnt.platform.base.domain.Entity implements Serializable{
+public class ListEntries extends BaseEntity{
 
     private static final long serialVersionUID = 1L;
     
