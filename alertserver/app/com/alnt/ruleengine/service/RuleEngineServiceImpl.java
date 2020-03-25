@@ -558,7 +558,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 			 
 			 ParserContext context = new ParserContext();
 				Serializable compiledExpression = MVEL.compileExpression(expr, context);
-			 return compiledExpression.toString(); 
+			 return "valid"; 
 			 } );
 //			.exceptionally(e ->  {
 //				return e.getMessage(); 
