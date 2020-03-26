@@ -22,7 +22,7 @@ public class HashUtils {
 		String[] mutableHash = new String[1];
 		Function<String, Boolean> update = hash -> { mutableHash[0] = hash; return true; };
 
-		String hashPw1 = HashUtils.hash("password");
+		String hashPw1 = HashUtils.hash("Alert1234");
 		System.out.println("hash of pw1: {} "+hashPw1);
 		System.out.println("verifying pw1: {} "+HashUtils.verifyAndUpdateHash("password", hashPw1, update));
 		System.out.println("verifying pw1 fails: {} "+HashUtils.verifyAndUpdateHash("password1", hashPw1, update));
