@@ -3,9 +3,63 @@ package com.alnt.ruleengine.business;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import com.alnt.platform.base.request.RequestDetails;
+import com.alnt.platform.core.configsetting.domain.dto.ConfigSettingDTO;
+import com.alnt.platform.core.configsetting.service.ConfigSettingService;
+import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
+import com.jayway.jsonpath.DocumentContext;
+
+@Singleton
 public class JSONManipulator {
 
+	
+	
+	@Inject
+    @Named("localcache") ConfigSettingService configSettingService;
+	
+	public  String applyConfigToJSON(RequestDetails requestDetails,String json ) {
+		
+				
+
+		try {
+			
+			CompletionStage<Stream<ConfigSettingDTO>> dto = ((ConfigSettingServiceImpl)configSettingService).getBy(requestDetails, "groupName", "SOD");
+
+			Stream<ConfigSettingDTO> stream = dto.toCompletableFuture().get();
+			
+			List<ConfigSettingDTO> collect = stream.filter(e -> {
+				return e.isActive() && e.getExtId().equals("marked_for_deletion_expr");
+			})
+			.collect(Collectors.toList());
+			
+			for(ConfigSettingDTO c : collect) {
+				 json = applyConfig(json, "$." + c.getValue());
+			}
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		//marked_for_deletion_expr
+		return json;
+	}
+	
+	private static String applyConfig(String json,String setting) {
+		
+		DocumentContext jsonDocContext = com.jayway.jsonpath.JsonPath.parse(json);
+		DocumentContext delete = jsonDocContext.delete(setting);
+	       
+	    return delete.jsonString();
+	}
 	private static boolean manipulate_Request_Against_Rule(String rule, Object request) {
 		
 		String[] splitTexts = rule.split("\\.");

@@ -611,7 +611,7 @@ POST   /api/policyengine/execute        com.alnt.ruleengine.controller.RuleEngin
 POST   /api/policyengine/evaluateExpr   com.alnt.ruleengine.controller.RuleEngineController.evaluateExpr(request:Request)
 ### NoDocs ###
 POST   /api/ruleengine/er           com.alnt.ruleengine.controller.RuleEngineController.evaluateRule(request:Request)
-
+POST   /api/ruleengine/checkDel           com.alnt.ruleengine.controller.RuleEngineController.checkDeletion(request:Request)
 
 ###
  #  summary: Find Response Action

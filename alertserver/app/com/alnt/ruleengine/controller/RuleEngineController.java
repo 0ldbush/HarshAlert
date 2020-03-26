@@ -1,26 +1,26 @@
 package com.alnt.ruleengine.controller;
 
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
-
 import com.alnt.platform.base.controller.BaseController;
 import com.alnt.platform.base.presentation.JsonViews;
+import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.response.ApiResponse;
+import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.policyengine.domain.Rule;
 import com.alnt.policyengine.domain.dto.RuleDTO;
-import com.alnt.ruleengine.domain.dto.DefaultOutput;
+import com.alnt.ruleengine.business.JSONManipulator;
 import com.alnt.ruleengine.service.RuleEngineService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.name.Named;
 
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
@@ -35,6 +35,42 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		super(ruleEnginService, ec, Rule.class, RuleDTO.class);
 	}
 
+
+	public CompletionStage<Result> checkDeletion(Http.Request request) {
+		
+		
+		final GsonBuilder gsonBuildr = new GsonBuilder();
+      //  gsonBuildr.registerTypeAdapter(Date.class, new DateDeserializer());
+		 Gson jsonP = gsonBuildr.create();
+		 HashMap requestObject = jsonP.fromJson(Json.stringify(request.body().asJson()), HashMap.class);
+		
+		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
+		 
+		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
+				
+				String modifiedJson = new JSONManipulator().applyConfigToJSON(requestDetails, Json.stringify(request.body().asJson()));
+				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
+				
+				Map m = new HashMap();
+				m.put("request", requestDetails);
+				m.put("json", jsonObject);
+				
+				return m;
+			});
+		 
+		
+			return jsonModified
+					.thenApplyAsync(objectStream -> ok(
+							Json.toJson(new ApiResponse(Boolean.TRUE, objectStream, null))
+					), ec.current())
+					.exceptionally(
+				            t -> {
+				            	return internalServerError(
+										Json.toJson(new ApiResponse(Boolean.FALSE, ((Exception)t).getMessage(), null))
+							);
+				     });
+	}
+	
 	public CompletionStage<Result> evaluateExpr(Http.Request request) {
 		
 		
@@ -89,39 +125,53 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		final GsonBuilder gsonBuildr = new GsonBuilder();
       //  gsonBuildr.registerTypeAdapter(Date.class, new DateDeserializer());
 		 Gson jsonP = gsonBuildr.create();
-		 HashMap requestObject = jsonP.fromJson(Json.stringify(request.body().asJson()), HashMap.class);
+		 String stringify = Json.stringify(request.body().asJson());
+		 
+		 
+		 
+		//HashMap requestObject = jsonP.fromJson(stringify, HashMap.class);
 		
 		
-		
-		Object policyGroup  = requestObject.get("policyGroup");
-	
-			
-			final List<String> pg = (List<String>)policyGroup;
-			
-			return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
+		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
+		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
 				
+				String modifiedJson = new JSONManipulator().applyConfigToJSON(requestDetails, stringify);
+				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
+				
+				Map m = new HashMap();
+				m.put("request", requestDetails);
+				m.put("json", jsonObject);
+				
+				return m;
+			});
+		 
+		 return jsonModified.thenComposeAsync(ob -> {
+				
+				RequestDetails requestDetails = (RequestDetails) ob.get("request");
+				Map requestObject =  (Map) ob.get("json");
 				long l = System.currentTimeMillis();
-				CompletableFuture applyRules = ((RuleEngineService)getService()).applyRules(requestDetails, requestObject, pg);
 				
+				final List<String> pg  = (List<String>) requestObject.get("policyGroup");
+				CompletableFuture applyRules = ((RuleEngineService)getService()).applyRules(requestDetails, requestObject, pg);
+		
 				System.err.print("Done in " + (System.currentTimeMillis() - l) / 1000 + " sec"); 
 				return applyRules
-						.thenApplyAsync(
-						objectStream -> ok(
-									//Json.toJson(new ApiResponse(Boolean.TRUE, objectStream, null))
-									JsonViews.toJson(new ApiResponse(Boolean.TRUE, objectStream, null),JsonViews.Header.class)
-						), ec.current())
-						.exceptionally(
-					            t -> {
-					            	return internalServerError(
-											Json.toJson(new ApiResponse(Boolean.TRUE, ((Exception)t).getMessage(), null))
-								);
-					             // return ((Exception)t).getMessage();
-					            });
-				
-			}, ec.current());
+				.thenApplyAsync(
+				objectStream -> ok(
+							//Json.toJson(new ApiResponse(Boolean.TRUE, objectStream, null))
+							JsonViews.toJson(new ApiResponse(Boolean.TRUE, objectStream, null),JsonViews.Header.class)
+				), ec.current())
+				.exceptionally(
+			            t -> {
+			            	return internalServerError(
+									Json.toJson(new ApiResponse(Boolean.TRUE, ((Exception)t).getMessage(), null))
+						);
+			             // return ((Exception)t).getMessage();
+			            });
+		
+		 }, ec.current());		 
+	
 			
-		
-		
 
 	}
 }

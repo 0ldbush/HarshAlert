@@ -73,9 +73,11 @@ lazy val root = (project in file(".")).
 	  
 	  // https://mvnrepository.com/artifact/org.apache.poi/poi
       "org.apache.poi" % "poi" % "3.9",
-      "com.monitorjbl" % "xlsx-streamer" % "0.2.3"
+      "com.monitorjbl" % "xlsx-streamer" % "0.2.3",
 	  
-
+	//json
+	"com.jayway.jsonpath" % "json-path" % "2.4.0"
+	
  	)
   )
   
