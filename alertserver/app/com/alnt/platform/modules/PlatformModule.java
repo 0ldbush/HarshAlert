@@ -1,10 +1,12 @@
 package com.alnt.platform.modules;
 import com.alnt.platform.application.security.jwt.JwtValidator;
 import com.alnt.platform.application.security.jwt.JwtValidatorImpl;
-import com.alnt.platform.base.interceptor.BasePostUpdateEventListener;
 import com.alnt.platform.core.classdef.service.ClassDefLocalCachedServiceImpl;
 import com.alnt.platform.core.classdef.service.ClassDefService;
 import com.alnt.platform.core.classdef.service.ClassDefServiceImpl;
+import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
+import com.alnt.platform.core.configsetting.service.ConfigSettingService;
+import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
@@ -29,7 +31,8 @@ public class PlatformModule extends AbstractModule {
     	
     	bind(ClassDefService.class).annotatedWith(Names.named(CLASSDEF_BASE)).to(ClassDefServiceImpl.class);
     	bind(ClassDefService.class).annotatedWith(Names.named(CLASSDEF_LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
-    	
+		bind(ConfigSettingService.class).annotatedWith(Names.named(CLASSDEF_BASE)).to(ConfigSettingServiceImpl.class);
+		bind(ConfigSettingService.class).annotatedWith(Names.named(CLASSDEF_LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();
     }
 }
