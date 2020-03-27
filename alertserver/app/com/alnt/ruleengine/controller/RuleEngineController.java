@@ -52,7 +52,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
 				Map m = new HashMap();
-				m.put("request", requestDetails);
+				//m.put("request", requestDetails);
 				m.put("json", jsonObject);
 				
 				return m;
