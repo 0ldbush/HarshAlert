@@ -172,7 +172,7 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 			Date date = new Date();
 			if(bEntity.getCreatedOn() == null) {
 				bEntity.setCreatedOn(date);
-				bEntity.setIntStatus(BaseEntity.INT_STATUS.ACTIVE);
+				bEntity.setIntStatus(BaseEntity.INT_STATUS.ACTIVE.getValue());
 				if(requestDetails != null && requestDetails.getUser() != null) {
 					bEntity.setCreatedBy(requestDetails.getUser().getId());
 				}
