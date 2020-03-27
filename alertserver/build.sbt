@@ -53,7 +53,7 @@ lazy val root = (project in file(".")).
 	  "org.apache.commons" % "commons-collections4" % "4.4",
 	  
 	  
-		//"be.objectify" %% "deadbolt-java" % "2.8.0-SNAPSHOT",
+	  "be.objectify" %% "deadbolt-java" % "2.8.1",
 	  "com.auth0" % "java-jwt" % "3.9.0",
 	  
 	  //Annotation processors
@@ -67,8 +67,6 @@ lazy val root = (project in file(".")).
 	  "org.assertj" % "assertj-core" % "3.12.2" % Test,
 	  
 
-	  //"io.swagger.core.v3" % "swagger-annotations" % "2.1.1",
-	  //"io.swagger.core.v3" % "swagger-core" % "2.1.1"
 	  "org.webjars" % "swagger-ui" % "2.2.0",
 	 
 	  
@@ -76,12 +74,14 @@ lazy val root = (project in file(".")).
       "org.apache.poi" % "poi" % "3.9",
       "com.monitorjbl" % "xlsx-streamer" % "0.2.3",
       
-      
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.4.1",
       "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
       "org.apache.logging.log4j" % "log4j-core" % "2.4.1"
-	  
 
+	  
+	//json
+	"com.jayway.jsonpath" % "json-path" % "2.4.0"
+	
  	)
   )
   

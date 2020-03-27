@@ -6,7 +6,9 @@ import java.util.List;
 import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 import com.alnt.platform.core.navigation.domain.dto.MenuItemDTO;
 
-public class JobRoleDTO extends BaseMasterDTO {
+import be.objectify.deadbolt.java.models.Role;
+
+public class JobRoleDTO extends BaseMasterDTO implements Role{
 	/**
 	 * 
 	 */
@@ -31,6 +33,12 @@ public class JobRoleDTO extends BaseMasterDTO {
 
 	public void setMenuItems(List<MenuItemDTO> menuItems) {
 		this.menuItems = menuItems;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return this.getText();
 	}
 
 }
