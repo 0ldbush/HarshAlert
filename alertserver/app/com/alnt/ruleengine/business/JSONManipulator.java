@@ -67,10 +67,19 @@ public class JSONManipulator {
 	
 	private static String applyConfig(String json,String setting) {
 		
-		DocumentContext jsonDocContext = com.jayway.jsonpath.JsonPath.parse(json);
-		DocumentContext delete = jsonDocContext.delete("$." + setting);
+		try {
+			
+			DocumentContext jsonDocContext = com.jayway.jsonpath.JsonPath.parse(json);
+			DocumentContext delete = jsonDocContext.delete("$." + setting);
+			return delete.jsonString();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		return json;
+		
 	       
-	    return delete.jsonString();
+	    
 	}
 	private static boolean manipulate_Request_Against_Rule(String rule, Object request) {
 		
