@@ -76,7 +76,7 @@ lazy val root = (project in file(".")).
       
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.4.1",
       "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
-      "org.apache.logging.log4j" % "log4j-core" % "2.4.1"
+      "org.apache.logging.log4j" % "log4j-core" % "2.4.1",
 
 	  
 	//json
@@ -119,3 +119,4 @@ EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.ManagedClasses, EclipseCreateSrc.ManagedResources)
 
 javaOptions += "-Dlog4j.configurationFile=conf/log4j2.xml"
+
