@@ -170,7 +170,7 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 		if(entity instanceof BaseEntity) {
 			BaseEntity bEntity = (BaseEntity) entity;
 			Date date = new Date();
-			if(bEntity.getId() == null) {
+			if(bEntity.getCreatedOn() == null) {
 				bEntity.setCreatedOn(date);
 				if(requestDetails != null && requestDetails.getUser() != null) {
 					bEntity.setCreatedBy(requestDetails.getUser().getId());
@@ -190,7 +190,7 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 		if(entity instanceof BaseEntity) {
 			BaseEntity bEntity = (BaseEntity) entity;
 			Date date = new Date();
-			if(bEntity.getId() == null) {
+			if(bEntity.getCreatedOn() == null) {
 				bEntity.setCreatedOn(date);
 				if(requestDetails != null && requestDetails.getUser() != null) {
 					bEntity.setCreatedBy(requestDetails.getUser().getId());

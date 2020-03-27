@@ -22,11 +22,14 @@ import org.hibernate.annotations.SQLDelete;
 import com.alnt.access.jobrole.domain.JobRole;
 import com.alnt.platform.base.domain.BaseEntity;
 
+import be.objectify.deadbolt.java.models.Permission;
+import be.objectify.deadbolt.java.models.Subject;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "USERS")
 @SQLDelete(sql = "UPDATE USERS SET INT_STATUS = 3 WHERE ID = ?")
-public class User extends BaseEntity implements Serializable {
+public class User extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -11,7 +11,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDTO extends BaseDTO{
+import be.objectify.deadbolt.java.models.Permission;
+import be.objectify.deadbolt.java.models.Subject;
+
+public class UserDTO extends BaseDTO  implements Subject{
 	
 	/**
 	 * 
@@ -224,6 +227,18 @@ public class UserDTO extends BaseDTO{
 
 	public void setResetPassword(Boolean resetPassword) {
 		this.resetPassword = resetPassword;
+	}
+
+	@Override
+	public List<? extends Permission> getPermissions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getIdentifier() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

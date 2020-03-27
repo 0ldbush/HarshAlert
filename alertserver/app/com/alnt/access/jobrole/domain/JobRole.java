@@ -19,11 +19,13 @@ import org.hibernate.annotations.SQLDelete;
 import com.alnt.platform.base.domain.BaseMasterEntity;
 import com.alnt.platform.core.navigation.domain.MenuItem;
 
+import be.objectify.deadbolt.java.models.Role;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "JOB_ROLE")
 @SQLDelete(sql = "UPDATE JOB_ROLE SET INT_STATUS = 3 WHERE ID = ?")
-public class JobRole extends BaseMasterEntity  {
+public class JobRole extends BaseMasterEntity {
 	
 	private static final long serialVersionUID = 1L;
 
