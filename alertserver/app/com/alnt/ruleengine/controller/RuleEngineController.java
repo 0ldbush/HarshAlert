@@ -13,14 +13,12 @@ import com.alnt.platform.base.controller.BaseController;
 import com.alnt.platform.base.presentation.JsonViews;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.response.ApiResponse;
-import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.policyengine.domain.Rule;
 import com.alnt.policyengine.domain.dto.RuleDTO;
 import com.alnt.ruleengine.business.JSONManipulator;
 import com.alnt.ruleengine.service.RuleEngineService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.name.Named;
 
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
@@ -35,6 +33,8 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		super(ruleEnginService, ec, Rule.class, RuleDTO.class);
 	}
 
+	@Inject
+	private JSONManipulator man;
 
 	public CompletionStage<Result> checkDeletion(Http.Request request) {
 		
@@ -48,7 +48,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		 
 		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
 				
-				String modifiedJson = new JSONManipulator().applyConfigToJSON(requestDetails, Json.stringify(request.body().asJson()));
+				String modifiedJson = man.applyConfigToJSON(requestDetails, Json.stringify(request.body().asJson()));
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
 				Map m = new HashMap();
@@ -135,7 +135,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
 		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
 				
-				String modifiedJson = new JSONManipulator().applyConfigToJSON(requestDetails, stringify);
+				String modifiedJson = man.applyConfigToJSON(requestDetails, stringify);
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
 				Map m = new HashMap();

@@ -13,17 +13,28 @@ import javax.inject.Singleton;
 
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.core.configsetting.domain.dto.ConfigSettingDTO;
+import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
+import com.alnt.policyengine.domain.Rule;
+import com.alnt.policyengine.domain.dto.RuleDTO;
+import com.alnt.ruleengine.service.RuleEngineService;
 import com.jayway.jsonpath.DocumentContext;
+
+import play.libs.concurrent.HttpExecutionContext;
 
 @Singleton
 public class JSONManipulator {
 
 	
+	ConfigSettingService configSettingService;
 	
 	@Inject
-    @Named("localcache") ConfigSettingService configSettingService;
+    public JSONManipulator(@Named("localcache") ConfigSettingService cs) {
+		
+		this.configSettingService = cs;
+	}
+	
 	
 	public  String applyConfigToJSON(RequestDetails requestDetails,String json ) {
 		
@@ -31,17 +42,18 @@ public class JSONManipulator {
 
 		try {
 			
-			CompletionStage<Stream<ConfigSettingDTO>> dto = ((ConfigSettingServiceImpl)configSettingService).getBy(requestDetails, "groupName", "SOD");
+			CompletionStage<List<ConfigSettingDTO>> byCached = ((ConfigSettingLocalCachedServiceImpl)configSettingService).getByCached(requestDetails, "groupName", "SOD");
 
-			Stream<ConfigSettingDTO> stream = dto.toCompletableFuture().get();
 			
-			List<ConfigSettingDTO> collect = stream.filter(e -> {
-				return e.isActive() && e.getExtId().equals("marked_for_deletion_expr");
+			List<ConfigSettingDTO> list = byCached.toCompletableFuture().get();
+			
+			List<ConfigSettingDTO> collect = list.stream().filter(e -> {
+				return  e.getExtId().equals("marked_for_deletion_expr");
 			})
 			.collect(Collectors.toList());
 			
 			for(ConfigSettingDTO c : collect) {
-				 json = applyConfig(json, "$." + c.getValue());
+				 json = applyConfig(json,  c.getValue());
 			}
 			
 		} catch (Exception e) {
@@ -56,7 +68,7 @@ public class JSONManipulator {
 	private static String applyConfig(String json,String setting) {
 		
 		DocumentContext jsonDocContext = com.jayway.jsonpath.JsonPath.parse(json);
-		DocumentContext delete = jsonDocContext.delete(setting);
+		DocumentContext delete = jsonDocContext.delete("$." + setting);
 	       
 	    return delete.jsonString();
 	}
