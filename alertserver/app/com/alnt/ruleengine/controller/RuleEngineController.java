@@ -1,7 +1,6 @@
 package com.alnt.ruleengine.controller;
 
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -9,15 +8,16 @@ import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
 
+import com.alnt.platform.application.logger.LoggerHelper;
+import com.alnt.platform.application.logger.domain.AppLog;
+import com.alnt.platform.application.logger.domain.dto.AppLogDTO;
+import com.alnt.platform.application.logger.service.Logger;
 import com.alnt.platform.base.controller.BaseController;
 import com.alnt.platform.base.presentation.JsonViews;
 import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.policyengine.domain.Rule;
 import com.alnt.policyengine.domain.dto.RuleDTO;
-import com.alnt.ruleengine.domain.dto.DefaultOutput;
 import com.alnt.ruleengine.service.RuleEngineService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,13 +28,13 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 public class RuleEngineController extends BaseController<Rule,RuleDTO> {
-	
+	Logger log;
 	
 	@Inject
-	public RuleEngineController(RuleEngineService ruleEnginService, HttpExecutionContext ec) {
+	public RuleEngineController(RuleEngineService ruleEnginService, HttpExecutionContext ec,LoggerHelper loggerHelper) {
 		super(ruleEnginService, ec, Rule.class, RuleDTO.class);
+		this.log=loggerHelper.getLogger(RuleEngineController.class);
 	}
-
 	public CompletionStage<Result> evaluateExpr(Http.Request request) {
 		
 		
@@ -85,6 +85,8 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 	
 	public CompletionStage<Result> postRequest(Http.Request request) {
 		
+		log.error("in post");
+		log.debug("in post-json");
 		
 		final GsonBuilder gsonBuildr = new GsonBuilder();
       //  gsonBuildr.registerTypeAdapter(Date.class, new DateDeserializer());
@@ -99,7 +101,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 			final List<String> pg = (List<String>)policyGroup;
 			
 			return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
-				
+				log.db(requestDetails,new AppLogDTO("in rule","rule started",1l,"1"));
 				long l = System.currentTimeMillis();
 				CompletableFuture applyRules = ((RuleEngineService)getService()).applyRules(requestDetails, requestObject, pg);
 				
