@@ -126,12 +126,14 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 
 	@Override
 	public CompletionStage<Optional<E>> get(RequestDetails requestDetails, Long id) {
-		return supplyAsync(() -> lookup(getEmfForTenant(requestDetails), id), executionContext);
+		//return supplyAsync(() -> lookup(getEmfForTenant(requestDetails), id), executionContext);
+		return supplyAsync(() -> wrap(requestDetails, em -> lookup( em, id)), executionContext);
 	}
 
 	@Override
 	public CompletionStage<List<E>> getBy(RequestDetails requestDetails, String fieldName, Object value) {
-		return supplyAsync(() -> lookupBy(getEmfForTenant(requestDetails), fieldName, value), executionContext);
+		//return supplyAsync(() -> lookupBy(getEmfForTenant(requestDetails), fieldName, value), executionContext);
+		return supplyAsync(() -> wrap(requestDetails, em -> lookupBy( em, fieldName, value)), executionContext);
 	}
 
 	@Override
@@ -156,7 +158,8 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 	
 	@Override
 	public CompletionStage<List> getByGeneric(RequestDetails requestDetails, Class clazz, String fieldName, Object value) {
-		return supplyAsync(() -> lookupByGeneric(getEmfForTenant(requestDetails), clazz, fieldName, value), executionContext);
+		//return supplyAsync(() -> lookupByGeneric(getEmfForTenant(requestDetails), clazz, fieldName, value), executionContext);
+		return supplyAsync(() -> wrap(requestDetails, em -> lookupByGeneric(em, clazz, fieldName, value)), executionContext);
 	}
 
 	
