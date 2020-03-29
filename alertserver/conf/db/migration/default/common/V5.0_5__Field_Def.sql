@@ -1,6 +1,5 @@
-DELETE FROM public.field_def;
 
-INSERT INTO public.field_def (id,class_ext_id,donotcopy,field_name,is_base_class_field,is_dimension,is_list,is_measure,is_primitive,is_required,is_translated,is_unique,"label",no_history,reference_key,tooltip,"type",xtype) VALUES 
+INSERT INTO field_def (id,class_ext_id,do_not_copy,field_name,is_base_class_field,is_dimension,is_list,is_measure,is_primitive,is_required,is_translated,is_unique,"label",no_history,reference_key,tooltip,"type",xtype) VALUES 
 (1,'request',false,'roleData',false,false,true,false,false,false,false,false,'Role Data',false,NULL,NULL,'role',NULL)
 ,(2,'role',false,'roleName',false,false,false,false,true,false,false,false,'roleName/Role Name',false,NULL,NULL,NULL,NULL)
 ,(3,'role',false,'roleAction',false,false,false,false,true,false,false,false,'roleAction',false,NULL,NULL,NULL,NULL)

@@ -1,7 +1,6 @@
 
-DELETE FROM public.list_entries;
 
-INSERT INTO public.list_entries (id,int_status,entry_code,entry_name,list_code, entry_type) VALUES 
+INSERT INTO list_entries (id,int_status,entry_code,entry_name,list_code, entry_type) VALUES 
 (1,0,'ReturnMessage','Return Message','RESPONSEACTIONTYPES', '')
 ,(2,0,'DisplayMessage','Display Message','RESPONSEACTION_ALL', 'ReturnMessage')
 ,(3,0,'==','Equal','RULEOPERATOR', '')
@@ -13,7 +12,7 @@ INSERT INTO public.list_entries (id,int_status,entry_code,entry_name,list_code, 
 ,(9,0,'9','InActive','ENTITYSTATUS', '')
 ,(10,0,'&&','AND','RULELOGICALOPERATOR', '')
 ;
-INSERT INTO public.list_entries (id,int_status,entry_code,entry_name,list_code, entry_type) VALUES 
+INSERT INTO list_entries (id,int_status,entry_code,entry_name,list_code, entry_type) VALUES 
 (11,0,'||','OR','RULELOGICALOPERATOR', '')
 ,(12,0,'ANYTWO','ANY TWO','RULEOPERATOR', '')
 ,(13,0,'ANYTHREE','ANY THREE','RULEOPERATOR', '')

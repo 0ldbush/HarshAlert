@@ -74,7 +74,10 @@ lazy val root = (project in file(".")).
       "com.monitorjbl" % "xlsx-streamer" % "0.2.3",
 	  
 	//json
-	"com.jayway.jsonpath" % "json-path" % "2.4.0"
+	"com.jayway.jsonpath" % "json-path" % "2.4.0",
+	
+	"org.flywaydb" %% "flyway-play" % "6.0.0"
+	
 	
  	)
   )

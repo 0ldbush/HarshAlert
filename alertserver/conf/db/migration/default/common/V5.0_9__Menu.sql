@@ -1,26 +1,23 @@
 
 
-delete from public.menu_item;
 
-INSERT INTO public.menu_item (id,int_status,changed_by,changed_on,created_by,created_on,accesslevel,activity_id,"external","label",main,menu_id,parent_id,preferred,report_id,screen_control_id,seq,icon_path,menu_cls,submenu_icon_path,access_level,external_access,job_role_id) VALUES 
-(1,0,NULL,'2020-03-03 17:17:37.493',NULL,NULL,'','policyengine.responsecode',NULL,'Manage Response',false,'responsecode','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
-,(2,0,NULL,'2020-03-03 17:12:52.727',NULL,NULL,'','policyengine.policy',NULL,'Manage Policy',false,'policy','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-,(3,0,NULL,'2020-03-03 17:17:37.493',NULL,NULL,NULL,'policyengine.risk',NULL,'Manage Risk',NULL,'managerisk','riskmanagement',NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
-,(4,0,NULL,'2020-03-03 17:17:37.494',NULL,NULL,'','policyengine.ruleset',NULL,'Manage RuleSet',false,'ruleset','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-,(5,0,NULL,'2020-03-03 17:17:37.494',NULL,NULL,'','policyengine.rule',NULL,'Manage Rule',false,'rule','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-,(6,0,NULL,'2020-03-03 17:17:36.806',NULL,'2020-03-03 17:17:36.806',NULL,'policyengine.mitigationcontrol',NULL,'Manage Mitigation',NULL,'managemitigation','riskmanagement',NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
-,(7,NULL,NULL,NULL,NULL,NULL,'','setting.list',NULL,'Manage Master Data',false,'list','setting',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-,(8,NULL,NULL,NULL,NULL,NULL,'','setting.classdef',NULL,'Manage Rule Entity',false,'classdef','setting',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-,(9,0,NULL,'2020-03-03 17:51:38.188',NULL,'2020-03-03 17:51:38.188',NULL,'setting.role',NULL,'Manage Role',NULL,'managerole','admin',NULL,NULL,NULL,2,NULL,NULL,NULL,'CREATE',NULL,NULL)
-,(10,0,NULL,NULL,NULL,NULL,NULL,'setting.user',false,'Manage User',false,'manageuser','admin',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
-;
-INSERT INTO public.menu_item (id,int_status,changed_by,changed_on,created_by,created_on,accesslevel,activity_id,"external","label",main,menu_id,parent_id,preferred,report_id,screen_control_id,seq,icon_path,menu_cls,submenu_icon_path,access_level,external_access,job_role_id) VALUES 
-(11,0,NULL,'2020-03-03 17:17:37.492',NULL,'2020-03-03 17:08:47.927',NULL,NULL,NULL,'Risk Management',true,'riskmanagement',NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,'CREATE',NULL,1)
-,(12,0,NULL,'2020-03-03 17:17:37.492',NULL,NULL,NULL,NULL,NULL,'Setting',true,'setting',NULL,NULL,NULL,NULL,4,'/resources/shared/images/menu01.jpg',NULL,NULL,NULL,NULL,1)
-,(13,0,NULL,'2020-03-03 17:17:37.492',NULL,NULL,'',NULL,NULL,'Policy Engine',true,'policyengine',NULL,false,NULL,NULL,1,'/resources/shared/images/menu01.jpg',NULL,NULL,'CREATE',NULL,1)
-,(14,0,NULL,'2020-03-03 17:51:38.117',NULL,'2020-03-03 17:51:38.117',NULL,NULL,NULL,'Admin',true,'admin',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,1)
-;
--- INSERT INTO MENU_ITEM(ID, MENU_ID, MAIN, PARENT_ID, SEQ, LABEL, PREFERRED, ACCESS_LEVEL, ACTIVITY_ID, SCREEN_CONTROL_ID, REPORT_ID, EXTERNAL_ACCESS)
+INSERT INTO menu_item (id,int_status,changed_by,changed_on,created_by,created_on,activity_id,label,main,menu_id,parent_id,preferred,report_id,screen_control_id,seq,icon_path,menu_cls,submenu_icon_path,access_level,external_access,job_role_id) VALUES 
+(1,0,NULL,NULL,NULL,NULL,'policyengine.responsecode','Manage Response',false,'responsecode','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
+,(2,0,NULL,NULL,NULL,NULL,'policyengine.policy','Manage Policy',false,'policy','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(3,0,NULL,NULL,NULL,NULL,'policyengine.risk','Manage Risk',NULL,'managerisk','riskmanagement',NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
+,(4,0,NULL,NULL,NULL,NULL,'policyengine.ruleset','Manage RuleSet',false,'ruleset','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(5,0,NULL,NULL,NULL,NULL,'policyengine.rule','Manage Rule',false,'rule','policyengine',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(6,0,NULL,NULL,NULL,NULL,'policyengine.mitigationcontrol','Manage Mitigation',NULL,'managemitigation','riskmanagement',NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,NULL)
+,(7,NULL,NULL,NULL,NULL,NULL,'setting.list','Manage Master Data',false,'list','setting',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(8,NULL,NULL,NULL,NULL,NULL,'setting.classdef','Manage Rule Entity',false,'classdef','setting',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(9,0,NULL,NULL,NULL,NULL,'setting.role','Manage Role',NULL,'managerole','admin',NULL,NULL,NULL,2,NULL,NULL,NULL,'CREATE',NULL,NULL)
+,(10,0,NULL,NULL,NULL,NULL,'setting.user','Manage User',false,'manageuser','admin',false,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL)
+,(11,0,NULL,NULL,NULL,NULL,NULL,'Risk Management',true,'riskmanagement',NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,'CREATE',NULL,1)
+,(12,0,NULL,NULL,NULL,NULL,NULL,'Setting',true,'setting',NULL,NULL,NULL,NULL,4,'/resources/shared/images/menu01.jpg',NULL,NULL,NULL,NULL,1)
+,(13,0,NULL,NULL,NULL,NULL,NULL,'Policy Engine',true,'policyengine',NULL,false,NULL,NULL,1,'/resources/shared/images/menu01.jpg',NULL,NULL,'CREATE',NULL,1)
+,(14,0,NULL,NULL,NULL,NULL,NULL,'Admin',true,'admin',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,'CREATE',NULL,1)
+,(15,0,NULL,NULL,NULL,NULL,'setting.docnumberrange','Document Number Range',false,'docnumberrange','setting',false,NULL,NULL,4,NULL,NULL,NULL,'UPDATE',NULL,NULL)
+;-- INSERT INTO MENU_ITEM(ID, MENU_ID, MAIN, PARENT_ID, SEQ, LABEL, PREFERRED, ACCESS_LEVEL, ACTIVITY_ID, SCREEN_CONTROL_ID, REPORT_ID, EXTERNAL_ACCESS)
 -- VALUES (1, 'inbox', true, null, 1, 'Inbox', true, '', 'user.inbox', null, null, null);
 
 
