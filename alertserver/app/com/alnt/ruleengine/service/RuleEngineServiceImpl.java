@@ -375,10 +375,12 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 //			
 //		}
 		
-//		List<String> pgs  = new ArrayList<String>();
+//		List<String> pgs  = new ArrayList<String>();		
 		
 		Stream<CompletionStage<Object>> map2 = policyGroup.parallelStream().map(pg -> {
 			return pgService.getBy(requestDetails, "extId", pg).thenApplyAsync(pgDtoStr -> pgDtoStr.map(pgdto -> {
+				
+				if(!pgdto.isActive()) return null;
 				CompletionStage<List<PolicyDTO>> policyStreamStage = ((PolicyServiceImpl) policyService)
 						.getByCached(requestDetails, "policyGroup", pgdto.getExtId());
 //				
