@@ -2,6 +2,8 @@ package com.alnt.platform.base.domain.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DTO implements Serializable{
@@ -19,6 +21,8 @@ public class DTO implements Serializable{
 	protected String id_str;
 	
 	private String clientSequenceId;
+	
+	private boolean isNew;
 	
 	private String busObjCat;
 
@@ -52,12 +56,12 @@ public class DTO implements Serializable{
 		this.clientSequenceId = clientSequenceId;
 	}
 
-	public Integer getIntStatus() {
-		return intStatus;
+	public boolean getIsNew() {
+		return isNew;
 	}
 
-	public void setIntStatus(Integer intStatus) {
-		this.intStatus = intStatus;
+	public void setIsNew(boolean isNew) {
+		this.isNew = isNew;
 	}
 
 	public String getBusObjCat() {
