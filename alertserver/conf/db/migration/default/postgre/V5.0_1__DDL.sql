@@ -855,29 +855,6 @@ CREATE TABLE timeline_chgs (
     timelineid bigint
 );
 
-
---
--- Name: timeline_ui; Type: TABLE; Schema: ; Owner: -
---
-
--- CREATE TABLE timeline_ui (
---     id bigint NOT NULL,
---     busobjcat character varying(255),
---     busobjid bigint,
---     createdon timestamp without time zone,
---     eventtypetext character varying(255),
---     eventtype character varying(255),
---     field character varying(255),
---     fieldname character varying(255),
---     fieldtooltip character varying(255),
---     int_status integer,
---     newvalue character varying(255),
---     oldvalue character varying(255),
---     user_id bigint,
---     username character varying(255)
--- );
-
-
 --
 -- Name: user_job_role; Type: TABLE; Schema: ; Owner: -
 --
