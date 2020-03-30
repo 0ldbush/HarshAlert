@@ -2,6 +2,10 @@ package com.alnt.platform.base.interceptor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.event.spi.PreInsertEvent;
@@ -9,6 +13,9 @@ import org.hibernate.event.spi.PreInsertEventListener;
 
 import com.alnt.platform.base.domain.BaseMasterEntity;
 import com.alnt.platform.base.domain.BaseSettingEntity;
+import com.alnt.platform.base.request.RequestDetails;
+import com.alnt.platform.core.docnumberrange.domain.dto.DocNumberRequestDTO;
+import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
 
 public class BasePreInsertEventListener implements PreInsertEventListener {
 
@@ -16,6 +23,7 @@ public class BasePreInsertEventListener implements PreInsertEventListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 
 	@Override
 	public boolean onPreInsert(PreInsertEvent event) {
@@ -37,11 +45,31 @@ public class BasePreInsertEventListener implements PreInsertEventListener {
 	}
 	
 	private String getExtId(Object entity) {
-		String prefix = entity.getClass().getSimpleName().toUpperCase().substring(0,3);
-		int number = (int)(Math.random()*100000);
-		String suffix = StringUtils.leftPad(number+"", 7, "0");
-		String extId = prefix+suffix;
-		
+		boolean generateDefault = true;
+		String extId = null;
+		/*if(docNumberRangeService!= null) {			
+			Optional<String> extIdOpt = null;
+			try {
+				DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
+				//docNumberRequestDTO.setBusObjCat(busObjCat);
+				//docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
+				extIdOpt = docNumberRangeService.getDocNumber(new RequestDetails(), docNumberRequestDTO).toCompletableFuture().get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(extIdOpt!= null && extIdOpt.isPresent())
+				extId = extIdOpt.get();
+		}*/
+		if(generateDefault) {
+			String prefix = entity.getClass().getSimpleName().toUpperCase().substring(0,3);
+			int number = (int)(Math.random()*100000);
+			String suffix = StringUtils.leftPad(number+"", 7, "0");
+			extId = prefix+suffix;
+		}		
 		return extId;
 	}
 	
