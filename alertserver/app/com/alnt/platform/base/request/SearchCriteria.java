@@ -29,7 +29,8 @@ public class SearchCriteria {
 	private List<JoinEntity> joinList;
 	private String langCode;	
 	private String aliasName;	
-	private boolean applyIntStatusClause = true;	
+	private boolean applyIntStatusClause = true;
+	private boolean applyChangedOnSort = true;
 	private List<String> attributes=new ArrayList<String>();	
 	
 	public SearchCriteria() {
@@ -51,6 +52,19 @@ public class SearchCriteria {
 		if(searchCriteria.applyIntStatusClause && (intStatusList == null || intStatusList.isEmpty())) {
 			intStatusList= new ArrayList<Integer>();
 			intStatusList.add(INT_STATUS.ACTIVE.getValue());
+		}
+		List<SortBy> sortByList = null; 
+		if(searchCriteria != null && searchCriteria.getIntStatus() != null && !searchCriteria.getIntStatus().isEmpty()) {
+			sortByList = searchCriteria.getSortBy();
+		}
+		
+		if(searchCriteria.applyChangedOnSort && (sortByList == null || sortByList.isEmpty())) {
+			sortByList = new ArrayList<SortBy>();
+			SortBy sortBy = new SortBy();
+			sortBy.setDirection("DESC");
+			sortBy.setProperty("changedOn");
+			sortByList.add(sortBy);
+			searchCriteria.setSortBy(sortByList);
 		}
 		//add condition for intStatus
 		List<QuerySpecification<T>> specs = new ArrayList<QuerySpecification<T>>();
@@ -203,6 +217,12 @@ public class SearchCriteria {
 	}
 	public void setSortByString(String sortByString) {
 		this.sortByString = sortByString;
+	}
+	public boolean isApplyChangedOnSort() {
+		return applyChangedOnSort;
+	}
+	public void setApplyChangedOnSort(boolean applyChangedOnSort) {
+		this.applyChangedOnSort = applyChangedOnSort;
 	}
 	
 	
