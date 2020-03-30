@@ -14,4 +14,6 @@ import com.google.inject.ImplementedBy;
 public interface DocNumberRangeService extends BaseService<DocNumberRange, DocNumberRangeDTO> {
 	
 	CompletionStage<Optional<String>> getDocNumber(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO);
+	
+	CompletionStage<Optional<Object>> getDocNumber(RequestDetails requestDetails, Object entity);
 }

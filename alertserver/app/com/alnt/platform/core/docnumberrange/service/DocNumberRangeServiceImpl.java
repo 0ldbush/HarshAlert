@@ -21,11 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
 import com.alnt.platform.base.domain.BaseSettingEntity;
+import com.alnt.platform.base.domain.dto.BaseMasterDTO;
+import com.alnt.platform.base.domain.dto.BaseSettingDTO;
 import com.alnt.platform.base.request.Criteria;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.service.BaseServiceImpl;
 import com.alnt.platform.base.util.BusObjTypeMapping;
+import com.alnt.platform.base.util.DateUtil;
 import com.alnt.platform.core.docnumberrange.domain.DocNumber;
 import com.alnt.platform.core.docnumberrange.domain.DocNumberRange;
 import com.alnt.platform.core.docnumberrange.domain.dto.DocNumberRangeDTO;
@@ -48,9 +51,42 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		super(ec, repository, DocNumberRangeMapper.INSTANCE);
 	}
 	
+	public CompletionStage<Optional<Object>> getDocNumber(RequestDetails requestDetails, Object entity) {
+		return supplyAsync(() -> docNumber(requestDetails, entity), ec.current());
+	}
+	
+	
 	public CompletionStage<Optional<String>> getDocNumber(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO) {
 		return supplyAsync(() -> docNumber(requestDetails, docNumberRequestDTO), ec.current());
 	}
+	
+	private Optional<Object> docNumber(RequestDetails requestDetails, Object dto) {
+		
+		DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
+		String busObjTypeId = null;
+		if(dto instanceof BaseMasterDTO) {
+			busObjTypeId = ((BaseMasterDTO) dto).getType();
+		} 
+		docNumberRequestDTO.setBusObjCat(getBusObjCat(dto));
+		docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
+		if(dto instanceof BaseMasterDTO || dto instanceof BaseSettingDTO) {
+			Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
+			if(docNumber.isPresent()) {
+				if(dto instanceof BaseMasterDTO) {
+					((BaseMasterDTO) dto).setExtId(docNumber.get());
+				}else {
+					((BaseSettingDTO) dto).setExtId(docNumber.get());
+				}
+			}
+		}
+		return Optional.of(dto);
+	}
+	
+	private String getBusObjCat(Object dto) {
+		String className  = dto.getClass().getSimpleName();
+		return className.substring(0, className.indexOf("DTO"));
+	}
+	
 
 	private Optional<String> docNumber(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO) {
 		String finalResult = "";
@@ -117,8 +153,8 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 			// like 2020
 
 			if (fiscalYear <= 0)
-				fiscalYear = 1900 + new Date().getYear();
-
+				fiscalYear = DateUtil.getCurrentYear();
+			
 			DocNumber currentDocNumber = loadCurrentDocNumber(requestDetails, doc, fiscalYear, extId);
 			//int tempDocNumber = 0;
 			if (currentDocNumber != null) {
