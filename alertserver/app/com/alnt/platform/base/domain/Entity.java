@@ -21,8 +21,10 @@ public abstract class Entity  implements Serializable{
 	@GenericGenerator(name = "sequence_id", strategy = "com.alnt.platform.base.persistence.idgenerator.IDGenerator")
 	@GeneratedValue(generator = "sequence_id")
 	protected Long id;
-
 	
+	@Transient
+	private boolean isNew;
+
 	@Transient
 	private String clientSequenceId;
 
@@ -41,6 +43,14 @@ public abstract class Entity  implements Serializable{
 
 	public void setClientSequenceId(String clientSequenceId) {
 		this.clientSequenceId = clientSequenceId;
+	}
+
+	public boolean getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(boolean isNew) {
+		this.isNew = isNew;
 	}
 
 
