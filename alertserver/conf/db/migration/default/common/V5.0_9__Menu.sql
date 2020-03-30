@@ -14,8 +14,8 @@ INSERT INTO public.menu_item (id,changed_by,changed_on,created_by,created_on,int
 ,(14,NULL,NULL,NULL,NULL,0,'UPDATE',NULL,NULL,'/resources/shared/images/menu03.svg',1,'Admin',true,NULL,'admin',NULL,NULL,NULL,NULL,1,NULL)
 ;
 INSERT INTO public.menu_item (id,changed_by,changed_on,created_by,created_on,int_status,access_level,activity_id,external_access,icon_path,job_role_id,"label",main,menu_cls,menu_id,parent_id,preferred,report_id,screen_control_id,seq,submenu_icon_path) VALUES 
-(7,NULL,NULL,NULL,NULL,0,'UPDATE','setting.list',NULL,NULL,NULL,'Manage Master Data',false,NULL,'list','setting',false,NULL,NULL,1,NULL)
-,(8,NULL,NULL,NULL,NULL,0,'UPDATE','setting.classdef',NULL,NULL,NULL,'Manage Rule Entity',false,NULL,'classdef','setting',false,NULL,NULL,1,NULL)
+(7,NULL,NULL,NULL,NULL,0,'UPDATE','setting.list',NULL,NULL,NULL,'Manage List Entries',false,NULL,'list','setting',false,NULL,NULL,1,NULL)
+,(8,NULL,NULL,NULL,NULL,0,'UPDATE','setting.classdef',NULL,NULL,NULL,'Manage Class Definition',false,NULL,'classdef','setting',false,NULL,NULL,1,NULL)
 ,(3,NULL,NULL,NULL,NULL,0,'UPDATE','policyengine.risk',NULL,NULL,NULL,'Manage Risk',false,NULL,'managerisk','riskmanagement',NULL,NULL,NULL,1,NULL)
 ,(6,NULL,NULL,NULL,NULL,0,'UPDATE','policyengine.mitigationcontrol',NULL,NULL,NULL,'Manage Mitigation',false,NULL,'managemitigation','riskmanagement',NULL,NULL,NULL,1,NULL)
 ,(9,NULL,NULL,NULL,NULL,0,'UPDATE','setting.role',NULL,NULL,NULL,'Manage Role',false,NULL,'managerole','admin',NULL,NULL,NULL,2,NULL)
