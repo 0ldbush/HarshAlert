@@ -860,22 +860,22 @@ CREATE TABLE timeline_chgs (
 -- Name: timeline_ui; Type: TABLE; Schema: ; Owner: -
 --
 
-CREATE TABLE timeline_ui (
-    id bigint NOT NULL,
-    busobjcat character varying(255),
-    busobjid bigint,
-    createdon timestamp without time zone,
-    eventtypetext character varying(255),
-    eventtype character varying(255),
-    field character varying(255),
-    fieldname character varying(255),
-    fieldtooltip character varying(255),
-    int_status integer,
-    newvalue character varying(255),
-    oldvalue character varying(255),
-    user_id bigint,
-    username character varying(255)
-);
+-- CREATE TABLE timeline_ui (
+--     id bigint NOT NULL,
+--     busobjcat character varying(255),
+--     busobjid bigint,
+--     createdon timestamp without time zone,
+--     eventtypetext character varying(255),
+--     eventtype character varying(255),
+--     field character varying(255),
+--     fieldname character varying(255),
+--     fieldtooltip character varying(255),
+--     int_status integer,
+--     newvalue character varying(255),
+--     oldvalue character varying(255),
+--     user_id bigint,
+--     username character varying(255)
+-- );
 
 
 --
@@ -1116,6 +1116,33 @@ CREATE TABLE workflow_step_workflow_recipient_xref (
     workflow_step_recipient_id bigint NOT NULL,
     workflow_step_id bigint NOT NULL
 );
+
+
+--
+-- Name: timeline_ui; Type: VIEW; Schema: ; Owner: -
+--
+
+CREATE VIEW timeline_ui
+ AS
+ SELECT concat(timeline.id, timeline_chgs.id) AS id,
+    timeline_chgs.subtype AS eventtype,
+    timeline_chgs.subtype AS eventtypetext,
+    timeline.busobjcat,
+    timeline.busobjid,
+    timeline_chgs.field,
+    field_def.label AS fieldname,
+    field_def.tooltip AS fieldtooltip,
+    timeline_chgs.oldvalue,
+    timeline_chgs.newvalue,
+    timeline.createdby AS "user",
+    users.first_name AS username,
+    timeline.createdon,
+    0 AS int_status
+   FROM timeline_chgs
+     LEFT JOIN timeline ON timeline.id = timeline_chgs.timelineid
+     LEFT JOIN users ON users.id = timeline.createdby
+     LEFT JOIN field_def ON field_def.field_name::text = timeline_chgs.field::text
+  ORDER BY timeline.createdon DESC;
 
 
 --
@@ -1443,8 +1470,8 @@ ALTER TABLE ONLY timeline
 -- Name: timeline_ui timeline_ui_pkey; Type: CONSTRAINT; Schema: ; Owner: -
 --
 
-ALTER TABLE ONLY timeline_ui
-    ADD CONSTRAINT timeline_ui_pkey PRIMARY KEY (id);
+-- ALTER TABLE ONLY timeline_ui
+--     ADD CONSTRAINT timeline_ui_pkey PRIMARY KEY (id);
 
 
 --
