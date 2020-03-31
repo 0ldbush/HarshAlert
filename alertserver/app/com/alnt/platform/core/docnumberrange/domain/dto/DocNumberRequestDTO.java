@@ -2,15 +2,17 @@ package com.alnt.platform.core.docnumberrange.domain.dto;
 
 public class DocNumberRequestDTO {
 	
-	String busObjCat;
+	private String busObjCat;
 	
-	String busObjTypeId;
+	private String busObjTypeId;
 	
-	int fiscalYear;
+	private int fiscalYear;
 	
-	String userDocNum;
+	private String userDocNum;
 	
-	String docNumberRangeId;
+	private String docNumberRangeId;
+	
+	private String busObjCatClazz;
 
 	public String getBusObjCat() {
 		return busObjCat;
@@ -50,6 +52,14 @@ public class DocNumberRequestDTO {
 
 	public void setDocNumberRangeId(String docNumberRangeId) {
 		this.docNumberRangeId = docNumberRangeId;
+	}
+
+	public String getBusObjCatClazz() {
+		return busObjCatClazz;
+	}
+
+	public void setBusObjCatClazz(String busObjCatClazz) {
+		this.busObjCatClazz = busObjCatClazz;
 	}
 
 }

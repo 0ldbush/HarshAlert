@@ -43,17 +43,17 @@ public class ClassDef extends BaseMasterEntity{
     private String parentBusObjCat;
 
 	@Column(name="IS_RULE_PARENT")
-    private boolean isRuleParent;
+    private Boolean isRuleParent;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="CLASS_EXT_ID", referencedColumnName="EXT_ID", foreignKey = @ForeignKey)
     private List<FieldDef> fieldDefs = new ArrayList<FieldDef>();
     
-    public boolean getIsRuleParent() {
+    public Boolean getIsRuleParent() {
 		return isRuleParent;
 	}
 
-	public void setIsRuleParent(boolean isRuleParent) {
+	public void setIsRuleParent(Boolean isRuleParent) {
 		this.isRuleParent = isRuleParent;
 	}
 

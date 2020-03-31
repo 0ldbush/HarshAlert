@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
 import com.alnt.platform.base.domain.BaseSettingEntity;
+import com.alnt.platform.base.domain.BaseEntity.INT_STATUS;
 import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 import com.alnt.platform.base.domain.dto.BaseSettingDTO;
 import com.alnt.platform.base.request.Criteria;
@@ -68,6 +69,7 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 			busObjTypeId = ((BaseMasterDTO) dto).getType();
 		} 
 		docNumberRequestDTO.setBusObjCat(getBusObjCat(dto));
+		docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(dto));
 		docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
 		if(dto instanceof BaseMasterDTO || dto instanceof BaseSettingDTO) {
 			Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
@@ -87,6 +89,12 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		return className.substring(0, className.indexOf("DTO"));
 	}
 	
+	private String getBusObjCatClazz(Object dto) {
+		String simpleClassName = getBusObjCat(dto);
+		String packageName  = dto.getClass().getPackage().getName();
+		return packageName.substring(0, packageName.indexOf(".dto"))+"."+simpleClassName;
+	}
+	
 
 	private Optional<String> docNumber(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO) {
 		String finalResult = "";
@@ -96,7 +104,7 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		try {
 
 			if (StringUtils.isBlank(docNumberRequestDTO.getDocNumberRangeId())) {
-				BaseSettingEntity settings = loadType(requestDetails, docNumberRequestDTO.getBusObjCat(), docNumberRequestDTO.getBusObjTypeId());
+				BaseSettingEntity settings = loadType(requestDetails, docNumberRequestDTO);
 				if (settings != null) {
 					extId = settings.getDocNumberRange();
 				}
@@ -202,33 +210,59 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 	}
 
 	//TODO : Change
-	private BaseSettingEntity loadType(RequestDetails requestDetails, String busObjCat, String busObjTypeId) {
+	private BaseSettingEntity loadType(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO) {
 		// TODO
-		BusObjTypeMapping mapping = BusObjTypeMapping.getInstance(busObjCat);
-		Class typeClazz;
+		String busObjTypeClazz = null;
+		Class typeClazz = null;
+		String busObjCatClazz = docNumberRequestDTO.getBusObjCatClazz();
+		boolean loadTypeFromMapping = false;
+		if(StringUtils.isNotBlank(busObjCatClazz)){
+			busObjTypeClazz = busObjCatClazz+"Type";
+			try {
+				typeClazz = Class.forName(busObjTypeClazz);
+			} catch (ClassNotFoundException e) {
+				loadTypeFromMapping = true;
+			}
+		}else {
+			loadTypeFromMapping = true;
+		}
+		
+		if(loadTypeFromMapping) {
+			BusObjTypeMapping mapping = BusObjTypeMapping.getInstance(docNumberRequestDTO.getBusObjCat());
+			busObjTypeClazz = mapping.getTypeClazz();
+		}
+		
+		if(StringUtils.isNotBlank(busObjTypeClazz) && typeClazz == null){
+			try {
+				typeClazz = Class.forName(busObjTypeClazz);
+			} catch (ClassNotFoundException e) {
+				return null;
+			}
+		}
+				
 		try {
-			typeClazz = Class.forName(mapping.getTypeClazz());
-			List objList = repository.getByGeneric(requestDetails, typeClazz, "extId", busObjTypeId).toCompletableFuture().get();
+			List objList = repository.getByGeneric(requestDetails, typeClazz, "extId", docNumberRequestDTO.getBusObjTypeId()).toCompletableFuture().get();
 			if(objList != null && objList.size() > 0) {
 				return (BaseSettingEntity)objList.get(0);
 			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		}catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return null;
 	}
 
 	private DocNumberRange loadDocNumberRange(RequestDetails requestDetails, String busObjCat, String extId) {
+		List<DocNumberRange> objList = null;
 		try {
-			List<DocNumberRange> objList = repository.getBy(requestDetails, "extId", extId).toCompletableFuture().get();
+			if(StringUtils.isNotBlank(extId))
+				objList = repository.getBy(requestDetails, "extId", extId).toCompletableFuture().get();
+			else
+				objList = loadDefaultDocNumberRange(requestDetails, busObjCat);
+			
 			if(objList != null && objList.size() > 0) {
 				return objList.get(0);
 			}
@@ -277,6 +311,38 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		}
 		
 		return docNumber;
+	}
+	
+	private List<DocNumberRange> loadDefaultDocNumberRange(RequestDetails requestDetails, String busObjCat) {
+		// TODO
+		//return null;
+		SearchCriteria searchParams = new SearchCriteria();
+		List<Criteria> filterCriteria= new ArrayList<Criteria>();
+		Criteria criteria1 = new Criteria();
+		criteria1.setFieldName("busObjCat");
+		criteria1.setOperator("=");
+		criteria1.setValue(busObjCat);
+		
+		filterCriteria.add(criteria1);
+		
+		List<Integer> intStatusList= new ArrayList<Integer>();
+		intStatusList.add(INT_STATUS.TEMPLATE.getValue());
+		
+		searchParams.setFilterCriteria(filterCriteria);
+		searchParams.setIntStatus(intStatusList);
+		List<DocNumberRange> docNumberRangeList = null;
+		try {
+			Page<DocNumberRange> docNumberRangePage =  repository.findAll(requestDetails, searchParams).toCompletableFuture().get();
+			docNumberRangeList = docNumberRangePage.toList();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return docNumberRangeList;
 	}
 
 	public String getNum(String rangeStart, String rangeEnd, String format, String currnentDocNum) {

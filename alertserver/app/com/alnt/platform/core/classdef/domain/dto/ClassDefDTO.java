@@ -22,18 +22,18 @@ public class ClassDefDTO extends BaseMasterDTO{
     
     private String parentBusObjCat;
     
-	private boolean isRuleParent;
+	private Boolean isRuleParent;
 	
 	private String className;
     
     private List<FieldDefDTO> fieldDefs = new ArrayList<FieldDefDTO>();
     
     
-    public boolean getIsRuleParent() {
+    public Boolean getIsRuleParent() {
 		return isRuleParent;
 	}
 
-	public void setIsRuleParent(boolean isRuleParent) {
+	public void setIsRuleParent(Boolean isRuleParent) {
 		this.isRuleParent = isRuleParent;
 	}
 
