@@ -1094,6 +1094,32 @@ CREATE TABLE workflow_step_workflow_recipient_xref (
     workflow_step_id bigint NOT NULL
 );
 
+--
+-- Name: app_log; Type: TABLE; Schema: ; Owner: -
+--
+
+CREATE TABLE app_log (
+    id int8 NOT NULL,
+    changed_by int8 NULL,
+    changed_on timestamp NULL,
+    created_by int8 NULL,
+    created_on timestamp NULL,
+    int_status int4 NULL,
+    bus_obj_cat varchar(255) NULL,
+    bus_obj_id int8 NULL,
+    ext_id varchar(50) NULL,
+    "text" varchar(255) NULL,
+    "type" varchar(255) NULL,
+    admin_message bool NULL,
+    body text NULL,
+    conversation_id varchar(255) NULL,
+    form bool NULL,
+    message_master_id varchar(255) NULL,
+    priority varchar(255) NULL,
+    subject varchar(255) NULL,
+    stage varchar(255) NULL
+);
+
 
 --
 -- Name: timeline_ui; Type: VIEW; Schema: ; Owner: -
@@ -1881,5 +1907,12 @@ ALTER TABLE ONLY policy_rule_set_xref
 
 ALTER TABLE ONLY attachment
     ADD CONSTRAINT fksxlgw8vqpwi8oo5yk0e0dysod FOREIGN KEY (type) REFERENCES attachment_type(ext_id);
+
+--
+-- Name: app_log app_log_pkey; Type: CONSTRAINT; Schema: ; Owner: -
+--
+
+ALTER TABLE ONLY app_log
+    ADD CONSTRAINT app_log_pkey PRIMARY KEY (id)
 
 
