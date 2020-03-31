@@ -1,9 +1,15 @@
 package com.alnt.platform.core.docnumberrange.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLDelete;
@@ -81,6 +87,11 @@ public class DocNumberRange extends BaseSettingEntity{
 	//[RefElementID:RemoveLeadingZeros] Remove Leading Zeros
 	@Column(name="REMOVE_LEADING_ZEROS")
 	private Boolean removeLeadingZeros;
+	
+	@ElementCollection
+	@CollectionTable(name = "DOC_NUMBER_RANGE_BUSOBJTYPE", joinColumns = @JoinColumn(name = "DOC_NUM_RANGE_ID"))
+	@Column(name = "BUS_OBJ_TYPE")
+	private List<String> busObjTypes = new ArrayList<String>();
 
 	public Boolean getFiscalYearRange() {
 		return fiscalYearRange;
@@ -200,6 +211,14 @@ public class DocNumberRange extends BaseSettingEntity{
 
 	public void setRemoveLeadingZeros(Boolean removeLeadingZeros) {
 		this.removeLeadingZeros = removeLeadingZeros;
+	}
+
+	public List<String> getBusObjTypes() {
+		return busObjTypes;
+	}
+
+	public void setBusObjTypes(List<String> busObjTypes) {
+		this.busObjTypes = busObjTypes;
 	}
 
 	@Override

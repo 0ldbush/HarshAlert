@@ -34,6 +34,7 @@ public class ErrorType implements Serializable, EnumerationType{
 	public static final ErrorType USER_NOT_FOUND  = new ErrorType("USER_NOT_FOUND","ERR11001", "User does not exist"); 
     public static final ErrorType INVALID_PASSWORD  = new ErrorType("INVALID_PASSWORD", "ERR11002","Invalid password");
     public static final ErrorType EXCEL_INVALID_INDEX  = new ErrorType("EXCEL_INVALID_INDEX", "ERR11003","SR No index is not in sequence");
+    public static final ErrorType DOC_NUMBER_RANGE_NOT_FOUND  = new ErrorType("DOC_NUMBER_RANGE_NOT_FOUND", "ERR11004","No valid document number range found");
 
     public static ErrorType getInstance(final String type) {
         return TYPES.get(type);

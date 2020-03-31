@@ -44,9 +44,6 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 	
 	@Inject
 	protected UserService userService;
-	
-	@Inject
-	protected DocNumberRangeService docNumberRangeService;
 
 	private final BaseService<E, D> service;
 	private final Class<E> domainClass;
@@ -174,10 +171,8 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 		{
 		D resource = Json.fromJson(json, getDTOClass());
 		return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
-			return docNumberRangeService.getDocNumber(requestDetails, resource).thenComposeAsync(dto -> {
-				return getService().save(requestDetails, (D)dto.get()).thenApplyAsync(optionalResource -> {
-					return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, null)))).orElseGet(Results::notFound);
-				}, ec.current());
+			return getService().save(requestDetails, resource).thenApplyAsync(optionalResource -> {
+				return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, null)))).orElseGet(Results::notFound);
 			}, ec.current());
 		}, ec.current());
 		}

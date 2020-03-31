@@ -7,6 +7,8 @@ import com.alnt.platform.core.classdef.service.ClassDefServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
+import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
+import com.alnt.platform.core.docnumberrange.service.DocNumberRangeServiceImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
@@ -22,17 +24,18 @@ import com.google.inject.name.Names;
  */
 public class PlatformModule extends AbstractModule {
 
-	public static final String CLASSDEF_BASE = "base";
-	public static final String CLASSDEF_LOCAL_CACHE = "localcache";
+	public static final String BASE = "base";
+	public static final String LOCAL_CACHE = "localcache";
 	
     @Override
     public void configure() {
     	bind(JwtValidator.class).to(JwtValidatorImpl.class).asEagerSingleton();
     	
-    	bind(ClassDefService.class).annotatedWith(Names.named(CLASSDEF_BASE)).to(ClassDefServiceImpl.class);
-    	bind(ClassDefService.class).annotatedWith(Names.named(CLASSDEF_LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
-		bind(ConfigSettingService.class).annotatedWith(Names.named(CLASSDEF_BASE)).to(ConfigSettingServiceImpl.class);
-		bind(ConfigSettingService.class).annotatedWith(Names.named(CLASSDEF_LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
+    	bind(ClassDefService.class).annotatedWith(Names.named(BASE)).to(ClassDefServiceImpl.class);
+    	bind(ClassDefService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
+		bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
+		bind(ConfigSettingService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
+		bind(DocNumberRangeService.class).annotatedWith(Names.named(BASE)).to(DocNumberRangeServiceImpl.class);
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();
     }
 }

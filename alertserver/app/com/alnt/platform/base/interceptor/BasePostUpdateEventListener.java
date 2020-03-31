@@ -20,6 +20,11 @@ public class BasePostUpdateEventListener extends BaseEventListener implements Po
 
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	public BasePostUpdateEventListener(Injector injector) {
 		super();

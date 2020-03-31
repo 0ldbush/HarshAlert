@@ -18,6 +18,11 @@ import play.inject.QualifierInstance;
 
 public class BasePostInsertEventListener extends BaseEventListener implements PostInsertEventListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	public BasePostInsertEventListener(Injector injector) {
 		super();
