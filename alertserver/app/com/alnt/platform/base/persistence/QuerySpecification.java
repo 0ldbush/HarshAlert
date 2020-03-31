@@ -14,6 +14,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.alnt.platform.base.request.Criteria;
@@ -175,7 +176,9 @@ public class QuerySpecification<T> implements Specification<T> {
 			if (path.getJavaType() == Date.class) { 
 				result = criteriaBuilder.equal(path, getDate(criteriaTmp.getValue().toString()));
 			}else {
+				if(BooleanUtils.toBooleanObject(criteriaTmp.getValue())==null)
 				result = criteriaBuilder.equal(path, criteriaTmp.getValue().toString());
+				else result = criteriaBuilder.equal(path, Boolean.parseBoolean(criteriaTmp.getValue()));
 			}
 		}else if(criteriaTmp.getOperator().equalsIgnoreCase("or")) {
 			if(criteriaTmp.getValueList() instanceof List) {
