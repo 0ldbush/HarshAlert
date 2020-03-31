@@ -47,15 +47,15 @@ public class BaseLocalCachedServiceImpl<E extends Entity, D extends DTO>
 		
 	}
 
-	@Override
-	public CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D data) {
-		if(cache != null && data.getId() != null) {
-			cache.remove(cacheKeyPrefix+"_get_"+data.getId().toString());
-		}
-		return this.getDaoRepository().update(requestDetails, id, getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
-			return Optional.of(getMapper().entityToDTO(optionalData.get()));
-        }, ec.current());
-	}
+//	@Override
+//	public CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D data) {
+//		if(cache != null && data.getId() != null) {
+//			cache.remove(cacheKeyPrefix+"_get_"+data.getId().toString());
+//		}
+//		return this.getDaoRepository().update(requestDetails, id, getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
+//			return Optional.of(getMapper().entityToDTO(optionalData.get()));
+//        }, ec.current());
+//	}
 	
 	@Override
 	public CompletionStage<Optional<D>> save(RequestDetails requestDetails, D data) {
