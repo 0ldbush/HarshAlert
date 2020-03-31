@@ -24,13 +24,13 @@ public interface BaseService <E extends Entity, D extends DTO> {
 	
 	CompletionStage<ApiResponse> findAll(RequestDetails requestDetails, SearchCriteria searchCriteria);
 
-    CompletionStage<D> create(RequestDetails requestDetails, D data);
+//    CompletionStage<D> create(RequestDetails requestDetails, D data);
 
     CompletionStage<Optional<D>> get(RequestDetails requestDetails, Long id);
     
     CompletionStage<Stream<D>> getBy(RequestDetails requestDetails,String fieldName, Object value);
 
-    CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D postData);
+//    CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D postData);
     
     CompletionStage<Optional<D>> save(RequestDetails requestDetails, D data);
     

@@ -56,7 +56,6 @@ lazy val root = (project in file(".")).
 	  "com.auth0" % "java-jwt" % "3.9.0",
 	  
 	  //Annotation processors
-	  "org.projectlombok" % "lombok" % "1.18.10" % "provided",
 	  "org.mapstruct" % "mapstruct" % "1.3.1.Final",
 	  "org.mapstruct" % "mapstruct-processor" % "1.3.1.Final" ,
 	  

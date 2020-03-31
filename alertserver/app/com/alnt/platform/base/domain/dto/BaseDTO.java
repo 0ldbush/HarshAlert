@@ -3,13 +3,8 @@ package com.alnt.platform.base.domain.dto;
 import java.util.Date;
 
 import com.alnt.platform.base.presentation.JsonViews;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter @Setter 
 public class BaseDTO extends DTO{
 
     /**
@@ -17,7 +12,6 @@ public class BaseDTO extends DTO{
 	 */
 	protected static final long serialVersionUID = -8642329718766344150L;
 	
-	//@JsonProperty(access = Access.READ_ONLY)
 	@JsonView(JsonViews.Header.class)
 	protected Integer intStatus;
 
@@ -86,6 +80,10 @@ public class BaseDTO extends DTO{
 
 	public void setChangedOn(Date changedOn) {
 		this.changedOn = changedOn;
+	}
+
+	public boolean isDeleted() {
+		return intStatus != null && intStatus == 3;
 	}
 	
 	
