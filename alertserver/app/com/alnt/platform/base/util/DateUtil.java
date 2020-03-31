@@ -44,5 +44,23 @@ public class DateUtil {
 	public static Date localDateTimeToDate(LocalDateTime localDateTime) {
 	    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
+	
+	public static int getYearFromDate(Date date) {
+	        int result = -1;
+	        if (date != null) {
+	            Calendar cal = Calendar.getInstance();
+	            cal.setTime(date);
+	            result = cal.get(Calendar.YEAR);
+	        }
+	        return result;
+	}
+	
+	public static int getCurrentYear() {
+        int result = -1;
+
+        Calendar cal = Calendar.getInstance();
+        result = cal.get(Calendar.YEAR);
+        return result;
+	}
 
 }

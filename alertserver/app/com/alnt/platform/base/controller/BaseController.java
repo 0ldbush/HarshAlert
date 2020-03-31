@@ -25,6 +25,7 @@ import com.alnt.platform.base.response.ApiMessage;
 import com.alnt.platform.base.response.ApiMessageType;
 import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.platform.base.service.BaseService;
+import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
@@ -40,8 +41,13 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 	private static final Log LOG = LogFactory.getLog(BaseController.class);
 
 	protected final HttpExecutionContext ec;
+	
 	@Inject
 	protected UserService userService;
+	
+	@Inject
+	protected DocNumberRangeService docNumberRangeService;
+
 	private final BaseService<E, D> service;
 	private final Class<E> domainClass;
 	private final Class<D> dtoClass;
@@ -168,8 +174,10 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 		{
 		D resource = Json.fromJson(json, getDTOClass());
 		return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
-			return getService().save(requestDetails, resource).thenApplyAsync(optionalResource -> {
-				return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, null)))).orElseGet(Results::notFound);
+			return docNumberRangeService.getDocNumber(requestDetails, resource).thenComposeAsync(dto -> {
+				return getService().save(requestDetails, (D)dto.get()).thenApplyAsync(optionalResource -> {
+					return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, null)))).orElseGet(Results::notFound);
+				}, ec.current());
 			}, ec.current());
 		}, ec.current());
 		}
