@@ -22,15 +22,7 @@ public class DTO implements Serializable{
 	
 	private String clientSequenceId;
 	
-	private boolean isNew;
-	
 	private String busObjCat;
-
-	protected Integer intStatus = Integer.valueOf(0);
-
-	public boolean isDeleted() {
-		return intStatus != null && intStatus == 3;
-	}
 
 	public String getDataLocaleCode() {
 		return dataLocaleCode;
@@ -56,14 +48,6 @@ public class DTO implements Serializable{
 		this.clientSequenceId = clientSequenceId;
 	}
 
-	public boolean getIsNew() {
-		return isNew;
-	}
-
-	public void setIsNew(boolean isNew) {
-		this.isNew = isNew;
-	}
-
 	public String getBusObjCat() {
 		return busObjCat;
 	}
@@ -79,7 +63,5 @@ public class DTO implements Serializable{
 	public void setId_str(String id_str) {
 		this.id_str = id_str;
 	}
-	
-	
 
 }

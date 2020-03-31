@@ -54,7 +54,7 @@ public class SearchCriteria {
 			intStatusList.add(INT_STATUS.ACTIVE.getValue());
 		}
 		List<SortBy> sortByList = null; 
-		if(searchCriteria != null && searchCriteria.getIntStatus() != null && !searchCriteria.getIntStatus().isEmpty()) {
+		if(searchCriteria != null && searchCriteria.getSortBy() != null && !searchCriteria.getSortBy().isEmpty()) {
 			sortByList = searchCriteria.getSortBy();
 		}
 		

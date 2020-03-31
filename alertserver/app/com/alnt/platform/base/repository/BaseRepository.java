@@ -15,13 +15,13 @@ public interface BaseRepository<E extends Entity> {
 	
 	CompletionStage<Stream<E>> list(RequestDetails requestDetails );
 
-    CompletionStage<E> create(RequestDetails requestDetails,  E data);
+//    CompletionStage<E> create(RequestDetails requestDetails,  E data);
 
     CompletionStage<Optional<E>> get(RequestDetails requestDetails,  Long id);
 
     CompletionStage<List<E>> getBy(RequestDetails requestDetails,  String fieldName, Object value);
 
-    CompletionStage<Optional<E>> update(RequestDetails requestDetails,  Long id, E postData);
+//    CompletionStage<Optional<E>> update(RequestDetails requestDetails,  Long id, E postData);
     
     CompletionStage<Optional<E>> save(RequestDetails requestDetails, E postData);
     

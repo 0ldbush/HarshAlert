@@ -1,16 +1,15 @@
 package com.alnt.ruleengine.business;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
+import org.springframework.stereotype.Service;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
 @Service
 public class DSLPatternUtil {
     private static final Pattern DSL_PATTERN = Pattern.compile("\\$\\((\\w+)(\\.\\w+)\\)"); //$(rulenamespace.keyword)

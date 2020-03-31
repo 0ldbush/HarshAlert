@@ -23,6 +23,7 @@ lazy val utils = (project in file("utils")).
   
 lazy val root = (project in file(".")).
   enablePlugins(PlayJava,DockerPlugin,SwaggerPlugin).
+  disablePlugins(PlayLogback).  
   settings(commonSettings: _*).
   settings(
     name := "alert-policy-engine",
@@ -56,7 +57,6 @@ lazy val root = (project in file(".")).
 	  "com.auth0" % "java-jwt" % "3.9.0",
 	  
 	  //Annotation processors
-	  "org.projectlombok" % "lombok" % "1.18.10" % "provided",
 	  "org.mapstruct" % "mapstruct" % "1.3.1.Final",
 	  "org.mapstruct" % "mapstruct-processor" % "1.3.1.Final" ,
 	  
@@ -72,6 +72,11 @@ lazy val root = (project in file(".")).
 	  // https://mvnrepository.com/artifact/org.apache.poi/poi
       "org.apache.poi" % "poi" % "3.9",
       "com.monitorjbl" % "xlsx-streamer" % "0.2.3",
+      
+      "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.4.1",
+      "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
+      "org.apache.logging.log4j" % "log4j-core" % "2.4.1",
+
 	  
 	//json
 	"com.jayway.jsonpath" % "json-path" % "2.4.0",
@@ -114,3 +119,6 @@ EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 
 // Use .class files instead of generated .scala files for views and routes
 EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.ManagedClasses, EclipseCreateSrc.ManagedResources)
+
+javaOptions += "-Dlog4j.configurationFile=conf/log4j2.xml"
+

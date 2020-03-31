@@ -1,10 +1,8 @@
 package com.alnt.platform.core.lists.domain.dto;
 
-import javax.persistence.Column;
+import com.alnt.platform.base.domain.dto.BaseDTO;
 
-import com.alnt.platform.base.domain.dto.DTO;
-
-public class ListEntriesDTO extends DTO{
+public class ListEntriesDTO extends BaseDTO{
 
     /**
 	 * 
