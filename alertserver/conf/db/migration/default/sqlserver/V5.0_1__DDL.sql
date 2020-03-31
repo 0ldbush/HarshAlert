@@ -254,6 +254,14 @@ CREATE TABLE doc_number_range (
 
 
 --
+-- Name: doc_number_range_busobjtype; Type: TABLE; Schema: ; Owner: -
+--
+CREATE TABLE doc_number_range_busobjtype (
+	[doc_num_range_id] [numeric](19, 0) NOT NULL,
+	[bus_obj_type] [varchar](255) NULL
+)
+
+--
 -- Name: field_def; Type: TABLE; Schema: ; Owner: -
 --
 
@@ -1905,4 +1913,15 @@ ALTER TABLE ONLY attachment
 --
 
 ALTER TABLE ONLY app_log
-    ADD CONSTRAINT app_log_pkey PRIMARY KEY (id)
+    ADD CONSTRAINT app_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: doc_number_range_busobjtype FKcqgwg7s6sir1tmw9lt9i91m0s; Type: FK CONSTRAINT; Schema: ; Owner: -
+--
+
+ALTER TABLE ONLY doc_number_range_busobjtype
+    ADD CONSTRAINT FKcqgwg7s6sir1tmw9lt9i91m0s FOREIGN KEY (doc_num_range_id) REFERENCES doc_number_range(id);
+
+
+
