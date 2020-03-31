@@ -119,10 +119,10 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 		return supplyAsync(() -> wrap(requestDetails, em -> findAll(requestDetails, em, searchParams)), executionContext);
 	}
 
-	@Override
-	public CompletionStage<E> create(RequestDetails requestDetails, E data) {
-		return supplyAsync(() -> wrap(requestDetails, em -> insert(requestDetails, em, data)), executionContext);
-	}
+//	@Override
+//	public CompletionStage<E> create(RequestDetails requestDetails, E data) {
+//		return supplyAsync(() -> wrap(requestDetails, em -> insert(requestDetails, em, data)), executionContext);
+//	}
 
 	@Override
 	public CompletionStage<Optional<E>> get(RequestDetails requestDetails, Long id) {
@@ -136,10 +136,10 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 		return supplyAsync(() -> wrap(requestDetails, em -> lookupBy( em, fieldName, value)), executionContext);
 	}
 
-	@Override
-	public CompletionStage<Optional<E>> update(RequestDetails requestDetails, Long id, E postData) {
-		return supplyAsync(() -> wrap(requestDetails, em -> modify(requestDetails, em, id, postData)), executionContext);
-	}
+//	@Override
+//	public CompletionStage<Optional<E>> update(RequestDetails requestDetails, Long id, E postData) {
+//		return supplyAsync(() -> wrap(requestDetails, em -> modify(requestDetails, em, id, postData)), executionContext);
+//	}
 	
 	@Override
 	public CompletionStage<Optional<E>> save(RequestDetails requestDetails, E postData) {
@@ -175,10 +175,12 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 			Date date = new Date();
 			if(bEntity.getCreatedOn() == null) {
 				bEntity.setCreatedOn(date);
-				bEntity.setIntStatus(BaseEntity.INT_STATUS.ACTIVE.getValue());
 				if(requestDetails != null && requestDetails.getUser() != null) {
 					bEntity.setCreatedBy(requestDetails.getUser().getId());
 				}
+			}
+			if(bEntity.getIntStatus() == null) {
+				bEntity.setIntStatus(BaseEntity.INT_STATUS.ACTIVE.getValue());
 			}
 			bEntity.setChangedOn(date);
 			if(requestDetails != null && requestDetails.getUser() != null) {
@@ -222,11 +224,11 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
         return data.stream();
     }
 	
-	private E insert(RequestDetails requestDetails, EntityManager em, E person) {
-    	setChangedFlags(requestDetails, person);
-        em.persist(person);
-        return person;
-    }
+//	private E insert(RequestDetails requestDetails, EntityManager em, E person) {
+//    	setChangedFlags(requestDetails, person);
+//        em.persist(person);
+//        return person;
+//    }
 	
 	private Optional lookup(EntityManager em, Long id) {
 		Object t = em.find(this.dataModelClass, id);
@@ -266,23 +268,23 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
 		em.remove(em.contains(entity) ? entity : em.merge(entity));
 	}
 	
-	private Optional<E> modify(RequestDetails requestDetails, EntityManager em, Long id, E postData) {
-        final E data = (E) em.find(this.dataModelClass, id);
-        if (data != null) {
-			/*
-			 * if(postData instanceof Poster) {
-			 * ((Poster)data).setUrl(((Poster)postData).getUrl());
-			 * ((Poster)data).setFabricJson(((Poster)postData).getFabricJson()); }
-			 */
-        	return Optional.ofNullable(em.merge(data));
-        }
-        return null;
-    }
+//	private Optional<E> modify(RequestDetails requestDetails, EntityManager em, Long id, E postData) {
+//        final E data = (E) em.find(this.dataModelClass, id);
+//        if (data != null) {
+//			/*
+//			 * if(postData instanceof Poster) {
+//			 * ((Poster)data).setUrl(((Poster)postData).getUrl());
+//			 * ((Poster)data).setFabricJson(((Poster)postData).getFabricJson()); }
+//			 */
+//        	return Optional.ofNullable(em.merge(data));
+//        }
+//        return null;
+//    }
 	
 	private Optional<E> save(RequestDetails requestDetails, EntityManager em, E entity) {
         if (entity != null) {
-        	setChangedFlags(requestDetails, entity);
         	entity = (E) new EntityPersistFixer(em).fixEntityForSave(entity);
+        	setChangedFlags(requestDetails, entity);
         	entity = em.merge(entity);
         	//em.refresh(entity);
     		//if (entityInformation.isNew(entity)) {

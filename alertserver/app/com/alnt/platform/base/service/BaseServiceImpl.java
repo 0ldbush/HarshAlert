@@ -67,12 +67,12 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
         }, ec.current());
 	}
 
-	@Override
-	public CompletionStage<D> create(RequestDetails requestDetails, D data) {
-		return this.getDaoRepository().create(requestDetails, getMapper().dtoToEntity(data)).thenApplyAsync((savedData) -> {
-            return getMapper().entityToDTO(savedData);
-        }, ec.current());
-	}
+//	@Override
+//	public CompletionStage<D> create(RequestDetails requestDetails, D data) {
+//		return this.getDaoRepository().create(requestDetails, getMapper().dtoToEntity(data)).thenApplyAsync((savedData) -> {
+//            return getMapper().entityToDTO(savedData);
+//        }, ec.current());
+//	}
 
 	@Override
 	public CompletionStage<Optional<D>> get(RequestDetails requestDetails, Long id) {
@@ -88,12 +88,12 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
         }, ec.current());
 	}
 
-	@Override
-	public CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D data) {
-		return this.getDaoRepository().update(requestDetails, id, getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
-			return Optional.of(getMapper().entityToDTO(optionalData.get()));
-        }, ec.current());
-	}
+//	@Override
+//	public CompletionStage<Optional<D>> update(RequestDetails requestDetails, Long id, D data) {
+//		return this.getDaoRepository().update(requestDetails, id, getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
+//			return Optional.of(getMapper().entityToDTO(optionalData.get()));
+//        }, ec.current());
+//	}
 	
 	@Override
 	public CompletionStage<Optional<D>> save(RequestDetails requestDetails, D data) {
