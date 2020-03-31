@@ -1,15 +1,9 @@
 package com.alnt.ruleengine.business;
 
-import java.io.Serializable;
-
 import javax.inject.Singleton;
 
 import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Singleton
 public class MVELParser<INPUT_DATA> {
 

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,8 +23,11 @@ import org.springframework.data.domain.Page;
 
 import com.alnt.platform.base.domain.BaseSettingEntity;
 import com.alnt.platform.base.domain.BaseEntity.INT_STATUS;
+import com.alnt.platform.base.domain.BaseMasterEntity;
 import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 import com.alnt.platform.base.domain.dto.BaseSettingDTO;
+import com.alnt.platform.base.exception.BaseBusinessException;
+import com.alnt.platform.base.exception.type.ErrorType;
 import com.alnt.platform.base.request.Criteria;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
@@ -61,38 +65,41 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		return supplyAsync(() -> docNumber(requestDetails, docNumberRequestDTO), ec.current());
 	}
 	
-	private Optional<Object> docNumber(RequestDetails requestDetails, Object dto) {
+	private Optional<Object> docNumber(RequestDetails requestDetails, Object entity) {
 		
 		DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
 		String busObjTypeId = null;
-		if(dto instanceof BaseMasterDTO) {
-			busObjTypeId = ((BaseMasterDTO) dto).getType();
+		if(entity instanceof BaseMasterEntity) {
+			busObjTypeId = ((BaseMasterEntity) entity).getType();
 		} 
-		docNumberRequestDTO.setBusObjCat(getBusObjCat(dto));
-		docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(dto));
+		docNumberRequestDTO.setBusObjCat(getBusObjCat(entity));
+		docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(entity));
 		docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
-		if(dto instanceof BaseMasterDTO || dto instanceof BaseSettingDTO) {
+		if(entity instanceof BaseMasterEntity || entity instanceof BaseSettingEntity) {
 			Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
 			if(docNumber.isPresent()) {
-				if(dto instanceof BaseMasterDTO) {
-					((BaseMasterDTO) dto).setExtId(docNumber.get());
+				if(entity instanceof BaseMasterDTO) {
+					((BaseMasterEntity) entity).setExtId(docNumber.get());
 				}else {
-					((BaseSettingDTO) dto).setExtId(docNumber.get());
+					((BaseMasterEntity) entity).setExtId(docNumber.get());
 				}
 			}
 		}
-		return Optional.of(dto);
+		return Optional.of(entity);
 	}
 	
 	private String getBusObjCat(Object dto) {
-		String className  = dto.getClass().getSimpleName();
-		return className.substring(0, className.indexOf("DTO"));
+		String classSimpleName  = dto.getClass().getSimpleName();
+		return classSimpleName;
+		//return className.substring(0, className.indexOf("DTO"));
 	}
 	
 	private String getBusObjCatClazz(Object dto) {
-		String simpleClassName = getBusObjCat(dto);
+		/*String simpleClassName = getBusObjCat(dto);
 		String packageName  = dto.getClass().getPackage().getName();
-		return packageName.substring(0, packageName.indexOf(".dto"))+"."+simpleClassName;
+		return packageName.substring(0, packageName.indexOf(".dto"))+"."+simpleClassName;*/
+		String className  = dto.getClass().getName();
+		return className;
 	}
 	
 
@@ -101,54 +108,52 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		String extId = docNumberRequestDTO.getDocNumberRangeId();
 		int fiscalYear = docNumberRequestDTO.getFiscalYear();
 		String userDocNum = docNumberRequestDTO.getUserDocNum();
-		try {
 
-			if (StringUtils.isBlank(docNumberRequestDTO.getDocNumberRangeId())) {
-				BaseSettingEntity settings = loadType(requestDetails, docNumberRequestDTO);
-				if (settings != null) {
-					extId = settings.getDocNumberRange();
-				}
+		/*if (StringUtils.isBlank(docNumberRequestDTO.getDocNumberRangeId())) {
+			BaseSettingEntity settings = loadType(requestDetails, docNumberRequestDTO);
+			if (settings != null) {
+				extId = settings.getDocNumberRange();
 			}
+		}*/
 
-			//boolean flag = false;
-			//int latestDocNumber = 0;
-			//TODO : if no doc number is assigned
-			DocNumberRange doc = loadDocNumberRange(requestDetails, docNumberRequestDTO.getBusObjCat(), extId);
-			
-			//TODO : If doc is null
+		//int latestDocNumber = 0;
+		//DocNumberRange doc = loadDocNumberRange(requestDetails, docNumberRequestDTO.getBusObjCat(), extId);
+		
+		DocNumberRange doc = loadDocNumberRangeForType(requestDetails, docNumberRequestDTO.getBusObjCat(), docNumberRequestDTO.getBusObjTypeId());
+		
+		if(doc != null) {
+			extId = doc.getExtId();
+		}
+		
+		//TODO : If doc is null
 
-			if (doc.getFiscalYearRange() == true && fiscalYear == 0) {
-				throw new RuntimeException(
-						"The number range is Fiscal year dependent but Fiscal year is not available.");
-			} else if (doc.getFiscalYearRange() == false && fiscalYear > 0) {
-				fiscalYear = 0;
-			}
+		if (doc.getFiscalYearRange() == true && fiscalYear == 0) {
+			throw new RuntimeException(
+					"The number range is Fiscal year dependent but Fiscal year is not available.");
+		} else if (doc.getFiscalYearRange() == false && fiscalYear > 0) {
+			fiscalYear = 0;
+		}
 
-			if (StringUtils.isNotBlank(extId)) {
-				if (doc.getUserInputOfExtId().equalsIgnoreCase("Always")) {
-					throw new RuntimeException("User did not enter docNumber and having always userInput");
-				} else {
-					finalResult = getNumber(requestDetails, doc, fiscalYear, extId);
-					if (finalResult != null && finalResult.length() > 0 && doc.getRemoveLeadingZeros() != null
-							&& doc.getRemoveLeadingZeros() == true) {
-						while (finalResult.length() > 0 && finalResult.charAt(0) == '0') {
-							finalResult = finalResult.substring(1, finalResult.length());
-						}
+		if (StringUtils.isNotBlank(extId)) {
+			if (doc.getUserInputOfExtId().equalsIgnoreCase("Always")) {
+				throw new RuntimeException("User did not enter docNumber and having always userInput");
+			} else {
+				finalResult = getNumber(requestDetails, doc, fiscalYear, extId);
+				if (finalResult != null && finalResult.length() > 0 && doc.getRemoveLeadingZeros() != null
+						&& doc.getRemoveLeadingZeros() == true) {
+					while (finalResult.length() > 0 && finalResult.charAt(0) == '0') {
+						finalResult = finalResult.substring(1, finalResult.length());
 					}
 				}
-			} else {
-				if (doc.getUserInputOfExtId().equalsIgnoreCase("Never"))
-					throw new RuntimeException("User entered docNumber and having Never userInput");
-				else
-					finalResult = checkNumber(requestDetails, doc, userDocNum);
-
 			}
-			return Optional.of(finalResult);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Optional.empty();
-			// TODO: handle exception
+		} else {
+			if (doc.getUserInputOfExtId().equalsIgnoreCase("Never"))
+				throw new RuntimeException("User entered docNumber and having Never userInput");
+			else
+				finalResult = checkNumber(requestDetails, doc, userDocNum);
+
 		}
+		return Optional.of(finalResult);
 	}
 
 	public String getNumber(RequestDetails requestDetails, DocNumberRange doc, int fiscalYear, String extId) {
@@ -209,9 +214,8 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		// updUtils.addRowToCollection("CurrentDoc", cd, objStore);
 	}
 
-	//TODO : Change
+	@SuppressWarnings({ "unused", "rawtypes" })
 	private BaseSettingEntity loadType(RequestDetails requestDetails, DocNumberRequestDTO docNumberRequestDTO) {
-		// TODO
 		String busObjTypeClazz = null;
 		Class typeClazz = null;
 		String busObjCatClazz = docNumberRequestDTO.getBusObjCatClazz();
@@ -255,6 +259,7 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private DocNumberRange loadDocNumberRange(RequestDetails requestDetails, String busObjCat, String extId) {
 		List<DocNumberRange> objList = null;
 		try {
@@ -275,6 +280,46 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		}
 
 		return null;
+	}
+	
+	private DocNumberRange loadDocNumberRangeForType(RequestDetails requestDetails, String busObjCat, String busObjTypeId) {
+		List<DocNumberRange> objList = null;			
+		objList = loadDocNumberRangeForBusObjCat(requestDetails, busObjCat);
+		boolean selectDefault = false;
+		DocNumberRange defaultRange = null;
+		if(objList != null && objList.size() > 0) {
+			List<DocNumberRange> defaultList = objList.stream()
+					.filter(docRange -> docRange.getBusObjTypes()==null || docRange.getBusObjTypes().isEmpty())
+					.collect(Collectors.toList());
+			if(defaultList != null && defaultList.size() > 0) {
+				defaultRange = defaultList.get(0);
+			}
+			
+			if(StringUtils.isNotBlank(busObjTypeId)) {
+				List<DocNumberRange> filList = objList.stream()
+						.filter(docRange -> docRange.getBusObjTypes()!=null && !docRange.getBusObjTypes().isEmpty() && docRange.getBusObjTypes().contains(busObjTypeId))
+						.collect(Collectors.toList());
+				
+				if(filList != null && filList.size() > 0) {
+					return filList.get(0);
+				} else {
+					selectDefault = true;
+				}
+			}else {
+				selectDefault = true;
+			}
+		} else {
+			throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
+		}
+		if(selectDefault) {
+			if(defaultRange != null) {
+				return defaultRange;
+			}else {
+				throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
+			}
+		}else {
+			throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
+		}
 	}
 
 	private DocNumber loadCurrentDocNumber(RequestDetails requestDetails, DocNumberRange doc, int fiscalYear, String extId) {
@@ -311,6 +356,34 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		}
 		
 		return docNumber;
+	}
+	
+	private List<DocNumberRange> loadDocNumberRangeForBusObjCat(RequestDetails requestDetails, String busObjCat) {
+		// TODO
+		//return null;
+		SearchCriteria searchParams = new SearchCriteria();
+		List<Criteria> filterCriteria= new ArrayList<Criteria>();
+		Criteria criteria1 = new Criteria();
+		criteria1.setFieldName("busObjCat");
+		criteria1.setOperator("=");
+		criteria1.setValue(busObjCat);
+		
+		filterCriteria.add(criteria1);
+				
+		searchParams.setFilterCriteria(filterCriteria);
+		//searchParams.setIntStatus(intStatusList);
+		List<DocNumberRange> docNumberRangeList = null;
+		try {
+			Page<DocNumberRange> docNumberRangePage =  repository.findAll(requestDetails, searchParams).toCompletableFuture().get();
+			docNumberRangeList = docNumberRangePage.toList();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		
+		return docNumberRangeList;
 	}
 	
 	private List<DocNumberRange> loadDefaultDocNumberRange(RequestDetails requestDetails, String busObjCat) {
@@ -417,12 +490,12 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		return true;
 	}
 
+	@SuppressWarnings("static-access")
 	public long getExpiryDateWithDate(Date myDate, String internalRangeStart, String internalRangeEnd,
 			String currentDocNumber) {
 		try {
 			Calendar resetDate = Calendar.getInstance();
 			Calendar todayDate = Calendar.getInstance();
-			Calendar cal3 = Calendar.getInstance();
 			resetDate.setTime(myDate);
 			todayDate.setTime(new Date());
 			long resetDateMilis = resetDate.getTimeInMillis();
@@ -487,6 +560,7 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 
 	public String getNumberNext(String startRange, String finishRange, String format, String currentNumber) {
 		String nextNumber;
+		@SuppressWarnings("unused")
 		int length, nextNumValue, charValue;
 		char format_typ, currentChar, nextCharValue;
 		String formatToSeparateIntAndChars = "";
@@ -615,6 +689,7 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getSeries(String startRange, String finishRange, String format, String currentNumber, int occurances) {
 
 		Map map = null;

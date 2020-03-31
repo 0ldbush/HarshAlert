@@ -79,6 +79,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO> implements U
 				Optional<User> user = completionStage.toCompletableFuture().get();
 				if (user.isPresent()) {
 					user.get().setPassword(getPasswordToReset(user.get()));
+					user.get().setResetPassword(false);
 					entityList.add(user.get());
 				}
 			} catch (Exception e) {
