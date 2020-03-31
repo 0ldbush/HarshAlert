@@ -9,6 +9,9 @@ import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
+import com.alnt.platform.application.logger.LoggerHelper;
+import com.alnt.platform.application.logger.domain.dto.AppLogDTO;
+import com.alnt.platform.application.logger.service.Logger;
 import com.alnt.platform.base.controller.BaseController;
 import com.alnt.platform.base.presentation.JsonViews;
 import com.alnt.platform.base.request.RequestDetails;
@@ -28,9 +31,12 @@ import play.mvc.Result;
 public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 	
 	
+    Logger log;
+	
 	@Inject
-	public RuleEngineController(RuleEngineService ruleEnginService, HttpExecutionContext ec) {
+	public RuleEngineController(RuleEngineService ruleEnginService, HttpExecutionContext ec,LoggerHelper loggerHelper) {
 		super(ruleEnginService, ec, Rule.class, RuleDTO.class);
+		this.log=loggerHelper.getLogger(RuleEngineController.class);
 	}
 
 	@Inject
@@ -133,8 +139,9 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		
 		
 		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
+		
 		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
-				
+			 log.db(requestDetails,new AppLogDTO("in rule","rule started",1l,"1"));
 				String modifiedJson = man.applyConfigToJSON(requestDetails, stringify);
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
