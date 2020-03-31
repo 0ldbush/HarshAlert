@@ -141,7 +141,6 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
 		
 		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
-			 log.db(requestDetails,new AppLogDTO("in rule","rule started",1l,"1"));
 				String modifiedJson = man.applyConfigToJSON(requestDetails, stringify);
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
