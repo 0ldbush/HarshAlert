@@ -377,81 +377,83 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		
 //		List<String> pgs  = new ArrayList<String>();		
 		
-		Stream<CompletionStage<Object>> map2 = policyGroup.parallelStream().map(pg -> {
-			return pgService.getBy(requestDetails, "extId", pg).thenApplyAsync(pgDtoStr -> pgDtoStr.map(pgdto -> {
-				
-				if(!pgdto.isActive()) return null;
-				CompletionStage<List<PolicyDTO>> policyStreamStage = ((PolicyServiceImpl) policyService)
-						.getByCached(requestDetails, "policyGroup", pgdto.getExtId());
-//				
-				policyStreamStage.thenApplyAsync((s) -> {
-
-					return s.parallelStream().map(policy -> {
-						return this.applyRuleInternal(policy, map);
-					});
-				});
-//				
-				return null;
-			}));
-		});
-		 
-		Stream<CompletionStage<List<DefaultOutput>>> allPgStream = policyGroup.stream().unordered()
-		.map(pg -> {
-			
-			CompletionStage<List<DefaultOutput>> pgResult = pgService.getBy(requestDetails, "extId",policyGroup)
-			.thenApply((e) ->  {return e.findFirst();})
-			.thenApply( pgdto -> {
-				
-				CompletionStage<List<PolicyDTO>> policyStreamStage = ((PolicyServiceImpl)policyService).getByCached(requestDetails, "policyGroup", pgdto.get().getExtId());
-				
-				List<DefaultOutput> f_LD = policyStreamStage.thenApplyAsync((s) -> {
-						
-						List<DefaultOutput> collect = s.parallelStream().map(policy ->   {
-							
-							List<DefaultOutput> o = new ArrayList<DefaultOutput>();
-								try {
-									o =  this.applyRuleInternal(policy,map).get();
-								} catch (InterruptedException e1) {
-									e1.printStackTrace();
-								} catch (ExecutionException e1) {
-									e1.printStackTrace();
-								}
-								return o;
-							})
-							//.collect(Collectors.toList())
-							//.stream()
-							.flatMap(List::stream)
-							.collect(Collectors.toList());
-						
-						return collect;
-						
-					})
-					.toCompletableFuture()
-					.join();
-				
-				System.err.print("join");
-				return f_LD;
+		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
+		CompletionStage<Stream<CompletableFuture<List<DefaultOutput>>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
+			return policies.map(policy -> {
+				return this.applyRuleInternal(policy,map);
 			});
-			
-			
-			return pgResult;
-		})
-		.collect(Collectors.toList())
-		.parallelStream();
-		
-		List<DefaultOutput> allOp = new ArrayList<>();
-		
-		allPgStream.forEach(l -> {
-			
-			List<DefaultOutput> join = l.toCompletableFuture().join();
-			allOp.addAll(join);
 		});
+		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
+			List<DefaultOutput> allListDO = new ArrayList<>();
+			stream.forEach(future -> {
+				future.thenAcceptAsync(listDO -> {
+					allListDO.addAll(listDO);
+				});
+			});
+			return allListDO;
+		});
+		return thenApplyAsync2.toCompletableFuture();
+		//Punet
+//		Stream<CompletionStage<List<DefaultOutput>>> allPgStream = policyGroup.stream().unordered()
+//		.map(pg -> {
+//			
+//			CompletionStage<List<DefaultOutput>> pgResult = pgService.getBy(requestDetails, "extId",policyGroup)
+//			.thenApply((e) ->  {return e.findFirst();})
+//			.thenApply( pgdto -> {
+//				
+//				CompletionStage<List<PolicyDTO>> policyStreamStage = ((PolicyServiceImpl)policyService).getByCached(requestDetails, "policyGroup", pgdto.get().getExtId());
+//				
+//				List<DefaultOutput> f_LD = policyStreamStage.thenApplyAsync((s) -> {
+//						
+//						List<DefaultOutput> collect = s.parallelStream().map(policy ->   {
+//							
+//							List<DefaultOutput> o = new ArrayList<DefaultOutput>();
+//								try {
+//									o =  this.applyRuleInternal(policy,map).get();
+//								} catch (InterruptedException e1) {
+//									e1.printStackTrace();
+//								} catch (ExecutionException e1) {
+//									e1.printStackTrace();
+//								}
+//								return o;
+//							})
+//							//.collect(Collectors.toList())
+//							//.stream()
+//							.flatMap(List::stream)
+//							.collect(Collectors.toList());
+//						
+//						return collect;
+//						
+//					})
+//					.toCompletableFuture()
+//					.join();
+//				
+//				System.err.print("join");
+//				return f_LD;
+//			});
+//			
+//			
+//			return pgResult;
+//		})
+//		.collect(Collectors.toList())
+//		.parallelStream();
+//		
+//		List<DefaultOutput> allOp = new ArrayList<>();
+//		
+//		allPgStream.forEach(l -> {
+//			
+//			List<DefaultOutput> join = l.toCompletableFuture().join();
+//			allOp.addAll(join);
+//		});
+//		
+//		
+//		CompletableFuture<List<DefaultOutput>> listCompletableFuture = CompletableFuture.supplyAsync(() ->  { return allOp; } );
+//
+//		System.err.print("returned...");
+//		return listCompletableFuture;
+		//Punet
 		
 		
-		CompletableFuture<List<DefaultOutput>> listCompletableFuture = CompletableFuture.supplyAsync(() ->  { return allOp; } );
-
-		System.err.print("returned...");
-		return listCompletableFuture;
 		
 		//commented for loop at policy_groups
 //		CompletionStage<Stream<PolicyDTO>> policyStreamStage = policyService.getBy(requestDetails, "policyGroup", pgDTO.getExtId());
