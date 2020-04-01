@@ -386,19 +386,21 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 //		List<String> pgs  = new ArrayList<String>();		
 		
 		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
-		CompletionStage<Stream<List<DefaultOutput>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
-			return policies.parallel().map(policy -> {
-				return this.applyRuleInternal(policy,map);
-			});
-		});
-		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
+		CompletionStage<List<DefaultOutput>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
-			stream.parallel().forEach(listDO -> {
-				allListDO.addAll(listDO);
+			policies.forEach(policy -> {
+				allListDO.addAll( this.applyRuleInternal(policy,map));
 			});
 			return allListDO;
 		});
-		return thenApplyAsync2.toCompletableFuture();
+//		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
+//			List<DefaultOutput> allListDO = new ArrayList<>();
+//			stream.parallel().forEach(listDO -> {
+//				allListDO.addAll(listDO);
+//			});
+//			return allListDO;
+//		});
+		return thenApplyAsync.toCompletableFuture();
 		//Punet
 //		Stream<CompletionStage<List<DefaultOutput>>> allPgStream = policyGroup.stream().unordered()
 //		.map(pg -> {
@@ -515,7 +517,6 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		List<DefaultOutput> allOp = new ArrayList<>();
 		
 		if(policyDTO.getRuleSets() != null && !policyDTO.getRuleSets().isEmpty()) {
-			List<Rule> allRUles = new ArrayList<>();
 			policyDTO.getRuleSets().parallelStream().forEach(ruleSet -> {
 				if(ruleSet.isActive()) {
 					ruleSet.getRules().parallelStream().forEach(rule -> {

@@ -160,7 +160,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 				final List<String> pg  = (List<String>) requestObject.get("policyGroup");
 				CompletableFuture applyRules = ((RuleEngineService)getService()).applyRules(requestDetails, requestObject, pg);
 		
-				System.err.print("Done in " + (System.currentTimeMillis() - l) / 1000 + " sec"); 
+//				System.err.print("Done in " + (System.currentTimeMillis() - l) / 1000 + " sec"); 
 				return applyRules
 				.thenApplyAsync(
 				objectStream -> ok(
