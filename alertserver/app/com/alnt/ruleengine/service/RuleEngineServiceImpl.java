@@ -379,13 +379,13 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		
 		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
 		CompletionStage<Stream<CompletableFuture<List<DefaultOutput>>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
-			return policies.parallel().map(policy -> {
+			return policies.map(policy -> {
 				return this.applyRuleInternal(policy,map);
 			});
 		});
 		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
-			stream.parallel().forEach(future -> {
+			stream.forEach(future -> {
 				future.thenAcceptAsync(listDO -> {
 					allListDO.addAll(listDO);
 				});
