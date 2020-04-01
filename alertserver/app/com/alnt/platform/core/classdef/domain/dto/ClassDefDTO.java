@@ -24,6 +24,10 @@ public class ClassDefDTO extends BaseMasterDTO{
     
 	private Boolean isRuleParent;
 	
+    private Boolean docNumberSupported;
+	
+    private Boolean editable;
+	
 	private String className;
     
     private List<FieldDefDTO> fieldDefs = new ArrayList<FieldDefDTO>();
@@ -83,6 +87,22 @@ public class ClassDefDTO extends BaseMasterDTO{
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public Boolean getDocNumberSupported() {
+		return docNumberSupported;
+	}
+
+	public void setDocNumberSupported(Boolean docNumberSupported) {
+		this.docNumberSupported = docNumberSupported;
+	}
+
+	public Boolean getEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
 	}   
 	
 	

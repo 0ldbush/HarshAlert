@@ -44,6 +44,12 @@ public class ClassDef extends BaseMasterEntity{
 
 	@Column(name="IS_RULE_PARENT")
     private Boolean isRuleParent;
+	
+	@Column(name="DOC_NUMBER_SUPPORTED")
+    private Boolean docNumberSupported;
+	
+	@Column(name="EDITABLE ")
+    private Boolean editable;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="CLASS_EXT_ID", referencedColumnName="EXT_ID", foreignKey = @ForeignKey)
@@ -103,6 +109,22 @@ public class ClassDef extends BaseMasterEntity{
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public Boolean getDocNumberSupported() {
+		return docNumberSupported;
+	}
+
+	public void setDocNumberSupported(Boolean docNumberSupported) {
+		this.docNumberSupported = docNumberSupported;
+	}
+
+	public Boolean getEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
 	}   
 	
 	
