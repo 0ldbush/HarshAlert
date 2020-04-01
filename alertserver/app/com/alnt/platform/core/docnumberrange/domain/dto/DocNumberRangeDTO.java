@@ -1,5 +1,8 @@
 package com.alnt.platform.core.docnumberrange.domain.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.alnt.platform.base.domain.dto.BaseSettingDTO;
 
 public class DocNumberRangeDTO extends BaseSettingDTO{
@@ -52,6 +55,8 @@ public class DocNumberRangeDTO extends BaseSettingDTO{
 
 	//[RefElementID:RemoveLeadingZeros] Remove Leading Zeros	
 	private Boolean removeLeadingZeros;
+	
+	private List<String> busObjTypes = new ArrayList<String>();
 
 	public Boolean getFiscalYearRange() {
 		return fiscalYearRange;
@@ -171,6 +176,14 @@ public class DocNumberRangeDTO extends BaseSettingDTO{
 
 	public void setRemoveLeadingZeros(Boolean removeLeadingZeros) {
 		this.removeLeadingZeros = removeLeadingZeros;
+	}
+
+	public List<String> getBusObjTypes() {
+		return busObjTypes;
+	}
+
+	public void setBusObjTypes(List<String> busObjTypes) {
+		this.busObjTypes = busObjTypes;
 	}
 
 	@Override
