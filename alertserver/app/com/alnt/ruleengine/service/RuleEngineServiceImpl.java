@@ -115,9 +115,16 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 
 		 
 	}
+	static List<String> attributeListMM = null;
+	static List<String> entitiesMM = new ArrayList<>();
 	private List<String> buildAttributeList(List<String> entities,RequestDetails requestDetails )
 	{
 
+		if(attributeListMM != null) {
+			
+			entities.addAll(entitiesMM);
+			return attributeListMM;
+		}
 		List<String> attributeList = new ArrayList<String>();
 		class FieldData {
 			String extId;
@@ -175,7 +182,8 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 			}
 
 		}
-
+		entitiesMM.addAll(entities);
+		this.attributeListMM = attributeList;
 		return attributeList;
 
 	}
@@ -378,17 +386,15 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 //		List<String> pgs  = new ArrayList<String>();		
 		
 		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
-		CompletionStage<Stream<CompletableFuture<List<DefaultOutput>>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
-			return policies.map(policy -> {
+		CompletionStage<Stream<List<DefaultOutput>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
+			return policies.parallel().map(policy -> {
 				return this.applyRuleInternal(policy,map);
 			});
 		});
 		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
-			stream.forEach(future -> {
-				future.thenAcceptAsync(listDO -> {
-					allListDO.addAll(listDO);
-				});
+			stream.parallel().forEach(listDO -> {
+				allListDO.addAll(listDO);
 			});
 			return allListDO;
 		});
@@ -502,56 +508,28 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		
 	}
 
-	private CompletableFuture<List<DefaultOutput>> applyRuleInternal (PolicyDTO policyDTO,  Map<String,Object> map ) {
+	private List<DefaultOutput> applyRuleInternal (PolicyDTO policyDTO,  Map<String,Object> map ) {
 		
 //		if(!policy.isPresent()) return null;
 //		PolicyDTO policyDTO = policy.get();
 		List<DefaultOutput> allOp = new ArrayList<>();
 		
 		if(policyDTO.getRuleSets() != null && !policyDTO.getRuleSets().isEmpty()) {
-			
-			Stream<RuleSetDTO> ruleSetStream = policyDTO.getRuleSets().parallelStream();
-			
-//			Stream<RuleSetDTO> filtered = ruleSetStream.filter(ruleSet -> {
-//				if(ruleSet.getRules() != null) {
-//					
-//					return true;
-//				}
-//				return false;
-//			});
-			
-			ruleSetStream.filter(ruleSet -> {
-					if(ruleSet.getRules() != null && ruleSet.isActive()) {
-						return true;
-					}
-					return false;
-				})	
-			.parallel()
-			 .map(ruleSet -> {
-						 
-						 System.err.print("Rules count " + ruleSet.getRules().size());
-						 List<DefaultOutput> ops = ruleSet.getRules()
-								 							.parallelStream()
-								 							.map(rule ->   {
-								 								
-								 								
-								 								return inferenceEngine.runSequential(rule, map );
-								 							})
-								 							.filter(d ->  {return d != null;})
-								 							.collect(Collectors.toList());
-						 
-						 return ops;
-					 })
-					 .forEach(l -> allOp.addAll(l));
-			 
-			// map2.forEach(l -> allOp.addAll(l));
+			List<Rule> allRUles = new ArrayList<>();
+			policyDTO.getRuleSets().parallelStream().forEach(ruleSet -> {
+				if(ruleSet.isActive()) {
+					ruleSet.getRules().parallelStream().forEach(rule -> {
+						if(rule.isActive()) {
+							DefaultOutput dfOut = inferenceEngine.runSequential(rule, map );
+							if(dfOut != null) {
+								allOp.add(dfOut);
+							}
+						}
+					});
+				}
+			});
 		}
-		
-	
-		 
-		 CompletableFuture<List<DefaultOutput>> listCompletableFuture = CompletableFuture.supplyAsync(() ->  { return allOp; } );
-			
-		return listCompletableFuture;
+		return allOp;
 	}
 
 	@Override

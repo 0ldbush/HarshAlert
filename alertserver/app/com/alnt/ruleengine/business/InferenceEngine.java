@@ -182,7 +182,7 @@ public abstract class InferenceEngine<INPUT_DATA, OUTPUT_RESULT> {
     	
 				String condition = rule.getCondition();
 				boolean matched = ruleParser.parseCondition(condition, inputData);
-				System.err.print(".");
+//				System.err.print(".");
 				return matched;
 		
     }
