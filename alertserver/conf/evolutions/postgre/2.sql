@@ -162,3 +162,7 @@ INSERT INTO aehsc.currency (id,int_status,description,ext_id,"text",country,deci
 (1,0,'USD','USD','USD','USA',2,'https://image.flaticon.com/icons/svg/197/197374.svg','pegged','$')
 ,(2,0,'INR','INR','INR','India',2,'https://image.flaticon.com/icons/svg/197/197419.svg','pegged','₹')
 ;
+
+
+INSERT INTO aehsc.tenant (id,int_status,changed_by,changed_on,created_by,created_on,tenant_name,db_schema,"domain",persistence_unit_name,tenant_id) VALUES
+(1,0,NULL,NULL,NULL,NULL,'alert','aehsc','alert','master',1);
