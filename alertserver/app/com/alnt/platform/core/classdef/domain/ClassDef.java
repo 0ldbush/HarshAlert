@@ -125,6 +125,22 @@ public class ClassDef extends BaseMasterEntity{
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public Boolean getDocNumberSupported() {
+		return docNumberSupported;
+	}
+
+	public void setDocNumberSupported(Boolean docNumberSupported) {
+		this.docNumberSupported = docNumberSupported;
+	}
+
+	public Boolean getEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
 	}   
 	
 	
