@@ -153,6 +153,8 @@ CREATE TABLE class_def (
     class_name character varying(255),
     field_in_parent character varying(255),
     is_rule_parent boolean,
+    editable boolean,
+    doc_number_supported boolean,
     parent_bus_obj_cat character varying(255),
     ref_field character varying(255)
 );
