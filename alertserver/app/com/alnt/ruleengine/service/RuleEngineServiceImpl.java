@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -187,8 +188,11 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		return attributeList;
 
 	}
-	private Map<String, List<String>> buildAttributeMap(Map<String,Object> map,Map<String, List<String>> attributeMap,List<String> entities )
+	
+	static Map<String, List<String>> attributeMap=new HashMap<String, List<String>>();
+	private Map<String, List<String>> buildAttributeMap(Map<String,Object> map,List<String> entities )
 	{
+		if(!attributeMap.isEmpty()) return attributeMap;
 		class FieldData {
 			Object object;
 			String prefix;
@@ -200,6 +204,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 			}
 
 		}
+		
 
 		Stack<FieldData> stack = new Stack<FieldData>();
 		FieldData data = new FieldData(map, null);
@@ -365,9 +370,10 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 	        //TODO: Here for each call, we are fetching all rules from db. It should be cache.
 		List<String> entities=new ArrayList<String>();
 		List<String> attributeList= buildAttributeList(entities,requestDetails);
-		 map.put("requestMap", buildAttributeMap(map, new HashMap<String, List<String>>(), entities));
-		 map.put("attributeList", attributeList);
+		 
 		 map.put("dsl", rbl);
+		 map.put("requestMap", buildAttributeMap(map, entities));
+		 map.put("attributeList", attributeList);
 		
 		 
 
@@ -388,7 +394,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
 		CompletionStage<List<DefaultOutput>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
-			policies.forEach(policy -> {
+			policies.parallel().forEach(policy -> {
 				allListDO.addAll( this.applyRuleInternal(policy,map));
 			});
 			return allListDO;
