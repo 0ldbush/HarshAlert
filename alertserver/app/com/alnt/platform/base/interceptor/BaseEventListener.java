@@ -3,6 +3,7 @@ package com.alnt.platform.base.interceptor;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
@@ -108,8 +109,9 @@ public abstract class BaseEventListener {
 			RequestDetails requestDetails = new RequestDetails();
 			requestDetails
 					.setTenantName((String) event.getSession().getFactory().getProperties().get("alert.tenantName"));
-			List<ClassDefDTO> classDefs = ((BaseLocalCachedServiceImpl<ClassDef, ClassDefDTO>) this.classDefService)
-					.getByCached(requestDetails, "busObjCat", busobjcat).toCompletableFuture().get();
+			
+			
+			List<ClassDefDTO> classDefs =  this.classDefService.getBy(requestDetails, "busObjCat", busobjcat).toCompletableFuture().get().collect(Collectors.toList());
 
 			ClassDefDTO parent = classDefs != null && !classDefs.isEmpty() ? classDefs.get(0) : null;
 

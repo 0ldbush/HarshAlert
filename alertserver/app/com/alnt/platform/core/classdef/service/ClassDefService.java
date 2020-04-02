@@ -5,6 +5,7 @@ import com.alnt.platform.core.classdef.domain.ClassDef;
 import com.alnt.platform.core.classdef.domain.dto.ClassDefDTO;
 import com.google.inject.ImplementedBy;
 
+@ImplementedBy(ClassDefServiceImpl.class)
 public interface ClassDefService extends BaseService<ClassDef, ClassDefDTO> {
 
 }
