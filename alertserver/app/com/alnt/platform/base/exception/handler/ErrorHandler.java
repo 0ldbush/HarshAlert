@@ -36,6 +36,9 @@ public class ErrorHandler implements HttpErrorHandler {
 	  if(exception.getCause() instanceof BaseBusinessException) {
 		  BaseBusinessException be = (BaseBusinessException)exception.getCause();
 		  message = ErrorType.toApiMessage(be.getErrorType());
+	  } else if(exception.getCause() != null && exception.getCause().getCause() != null && exception.getCause().getCause() instanceof BaseBusinessException) {
+		  BaseBusinessException be = (BaseBusinessException)exception.getCause().getCause();
+		  message = ErrorType.toApiMessage(be.getErrorType());
 	  } else {
 		  message = ErrorType.toApiMessage(ErrorType.GENERIC_SERVER_ERROR, stacktrace);
 	  }
