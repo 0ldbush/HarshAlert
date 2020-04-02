@@ -34,8 +34,6 @@ public class PlatformModule extends AbstractModule {
     public void configure() {
     	bind(JwtValidator.class).to(JwtValidatorImpl.class).asEagerSingleton();
     	
-    	bind(ClassDefService.class).annotatedWith(Names.named(BASE)).to(ClassDefServiceImpl.class);
-    	bind(ClassDefService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
 		
     	bind(UserService.class).annotatedWith(Names.named(BASE)).to(UserServiceImpl.class);
     	bind(UserService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(UserLocalCachedServiceImpl.class);

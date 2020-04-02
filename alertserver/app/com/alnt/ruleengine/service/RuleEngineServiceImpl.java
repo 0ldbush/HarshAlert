@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,14 +37,12 @@ import com.alnt.policyengine.domain.dto.RuleDTO;
 import com.alnt.policyengine.domain.dto.RuleSetDTO;
 import com.alnt.policyengine.service.PolicyGroupService;
 import com.alnt.policyengine.service.PolicyService;
-import com.alnt.policyengine.service.PolicyServiceImpl;
 import com.alnt.policyengine.service.RuleService;
 import com.alnt.ruleengine.business.DefaultInferenceEngine;
 import com.alnt.ruleengine.business.RuleLibrary;
 import com.alnt.ruleengine.domain.dto.DefaultOutput;
 import com.alnt.ruleengine.mapper.RuleMapper;
 import com.alnt.ruleengine.repository.RulesRepository;
-import com.google.inject.name.Named;
 
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -75,7 +72,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 
 	
 	@Inject
-	public RuleEngineServiceImpl(HttpExecutionContext ec, RulesRepository repository,@Named("base") ClassDefService classDefService) {
+	public RuleEngineServiceImpl(HttpExecutionContext ec, RulesRepository repository, ClassDefService classDefService) {
 		
 		super( ec, repository, RuleMapper.INSTANCE);
 		this.classDefService=classDefService;
