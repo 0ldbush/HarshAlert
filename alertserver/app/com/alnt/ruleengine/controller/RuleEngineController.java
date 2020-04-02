@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
@@ -141,11 +142,10 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 		 CompletionStage<RequestDetails> fetchRequestDetails = fetchRequestDetails(request);
 		
 		 CompletionStage<Map> jsonModified = fetchRequestDetails.thenApplyAsync(requestDetails -> {
-			 log.db(requestDetails,new AppLogDTO("in rule","rule started",1l,"1"));
 				String modifiedJson = man.applyConfigToJSON(requestDetails, stringify);
 				HashMap jsonObject = jsonP.fromJson(modifiedJson, HashMap.class);
 				
-				Map m = new HashMap();
+				Map m = new ConcurrentHashMap<>();
 				m.put("request", requestDetails);
 				m.put("json", jsonObject);
 				
@@ -161,7 +161,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 				final List<String> pg  = (List<String>) requestObject.get("policyGroup");
 				CompletableFuture applyRules = ((RuleEngineService)getService()).applyRules(requestDetails, requestObject, pg);
 		
-				System.err.print("Done in " + (System.currentTimeMillis() - l) / 1000 + " sec"); 
+//				System.err.print("Done in " + (System.currentTimeMillis() - l) / 1000 + " sec"); 
 				return applyRules
 				.thenApplyAsync(
 				objectStream -> ok(

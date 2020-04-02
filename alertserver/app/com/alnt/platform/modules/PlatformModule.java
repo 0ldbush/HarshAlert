@@ -1,4 +1,7 @@
 package com.alnt.platform.modules;
+import com.alnt.access.user.service.UserLocalCachedServiceImpl;
+import com.alnt.access.user.service.UserService;
+import com.alnt.access.user.service.UserServiceImpl;
 import com.alnt.platform.application.security.jwt.JwtValidator;
 import com.alnt.platform.application.security.jwt.JwtValidatorImpl;
 import com.alnt.platform.core.classdef.service.ClassDefLocalCachedServiceImpl;
@@ -33,7 +36,12 @@ public class PlatformModule extends AbstractModule {
     	
     	bind(ClassDefService.class).annotatedWith(Names.named(BASE)).to(ClassDefServiceImpl.class);
     	bind(ClassDefService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
-		bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
+		
+    	bind(UserService.class).annotatedWith(Names.named(BASE)).to(UserServiceImpl.class);
+    	bind(UserService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(UserLocalCachedServiceImpl.class);
+		
+    	
+    	bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
 		bind(ConfigSettingService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
 		bind(DocNumberRangeService.class).annotatedWith(Names.named(BASE)).to(DocNumberRangeServiceImpl.class);
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();

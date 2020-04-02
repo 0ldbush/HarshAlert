@@ -21,11 +21,9 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
-import com.alnt.platform.base.domain.BaseSettingEntity;
 import com.alnt.platform.base.domain.BaseEntity.INT_STATUS;
 import com.alnt.platform.base.domain.BaseMasterEntity;
-import com.alnt.platform.base.domain.dto.BaseMasterDTO;
-import com.alnt.platform.base.domain.dto.BaseSettingDTO;
+import com.alnt.platform.base.domain.BaseSettingEntity;
 import com.alnt.platform.base.exception.BaseBusinessException;
 import com.alnt.platform.base.exception.type.ErrorType;
 import com.alnt.platform.base.request.Criteria;
@@ -66,23 +64,29 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 	}
 	
 	private Optional<Object> docNumber(RequestDetails requestDetails, Object entity) {
-		
-		DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
-		String busObjTypeId = null;
-		if(entity instanceof BaseMasterEntity) {
-			busObjTypeId = ((BaseMasterEntity) entity).getType();
-		} 
-		docNumberRequestDTO.setBusObjCat(getBusObjCat(entity));
-		docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(entity));
-		docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
-		if(entity instanceof BaseMasterEntity || entity instanceof BaseSettingEntity) {
-			Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
-			if(docNumber.isPresent()) {
-				if(entity instanceof BaseMasterDTO) {
-					((BaseMasterEntity) entity).setExtId(docNumber.get());
-				}else {
-					((BaseMasterEntity) entity).setExtId(docNumber.get());
+		try {
+			DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
+			String busObjTypeId = null;
+			if(entity instanceof BaseMasterEntity) {
+				busObjTypeId = ((BaseMasterEntity) entity).getType();
+			} 
+			docNumberRequestDTO.setBusObjCat(getBusObjCat(entity));
+			docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(entity));
+			docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
+			if(entity instanceof BaseMasterEntity || entity instanceof BaseSettingEntity) {
+				Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
+				if(docNumber!= null && docNumber.isPresent()) {
+					if(entity instanceof BaseMasterEntity) {
+						((BaseMasterEntity) entity).setExtId(docNumber.get());
+					}else {
+						((BaseSettingEntity) entity).setExtId(docNumber.get());
+					}
 				}
+			}
+		}catch(Exception exception) {
+			if(exception instanceof BaseBusinessException) {
+				ErrorType error = ((BaseBusinessException)exception).getErrorType();
+				return Optional.of(error);
 			}
 		}
 		return Optional.of(entity);
@@ -121,9 +125,12 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		
 		DocNumberRange doc = loadDocNumberRangeForType(requestDetails, docNumberRequestDTO.getBusObjCat(), docNumberRequestDTO.getBusObjTypeId());
 		
-		if(doc != null) {
+		if(doc == null) {
+			return Optional.empty();
+		}else {
 			extId = doc.getExtId();
 		}
+
 		
 		//TODO : If doc is null
 
@@ -309,15 +316,18 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 				selectDefault = true;
 			}
 		} else {
+			//return null;
 			throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
 		}
 		if(selectDefault) {
 			if(defaultRange != null) {
 				return defaultRange;
 			}else {
+				//return null;
 				throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
 			}
 		}else {
+			//return null;
 			throw new BaseBusinessException(ErrorType.DOC_NUMBER_RANGE_NOT_FOUND);
 		}
 	}
