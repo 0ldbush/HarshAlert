@@ -378,6 +378,9 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
     }
 	
 	public Page<E> findAll(RequestDetails requestDetails, EntityManager em, SearchCriteria searchParams){
+		if(!getDomainClass().isAssignableFrom(BaseEntity.class)) {
+			searchParams.setApplyChangedOnSort(false);
+		}
 		QuerySpecification<E> spec = SearchCriteria.buildQuerySpecification(searchParams);
 		Pageable pageRequest = searchParams != null ? searchParams.getPageable() : null;
 		Page<E> results = null;
