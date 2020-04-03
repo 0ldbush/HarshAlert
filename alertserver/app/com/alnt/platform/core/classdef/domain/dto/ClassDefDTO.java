@@ -3,6 +3,8 @@ package com.alnt.platform.core.classdef.domain.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 
 
@@ -23,6 +25,10 @@ public class ClassDefDTO extends BaseMasterDTO{
     private String parentBusObjCat;
     
 	private Boolean isRuleParent;
+	
+    private Boolean docNumberSupported;
+	
+    private Boolean editable;
 	
 	private String className;
     
@@ -83,8 +89,22 @@ public class ClassDefDTO extends BaseMasterDTO{
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public Boolean getDocNumberSupported() {
+		return docNumberSupported;
+	}
+
+	public void setDocNumberSupported(Boolean docNumberSupported) {
+		this.docNumberSupported = docNumberSupported;
+	}
+
+	public Boolean getEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
 	}   
-	
-	
-	
+		
 }
