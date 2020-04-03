@@ -47,7 +47,6 @@ import com.alnt.policyengine.domain.dto.RuleExpressionDTO;
 import com.alnt.policyengine.domain.dto.UploadRuleDTO;
 import com.alnt.ruleengine.mapper.RuleMapper;
 import com.alnt.ruleengine.repository.RulesRepository;
-import com.google.inject.name.Named;
 import com.monitorjbl.xlsx.StreamingReader;
 
 import play.libs.Json;
@@ -64,7 +63,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	
 	@Inject
 	public RuleServiceImpl(HttpExecutionContext ec, RulesRepository repository,BinaryResourceService binaryResourceService,ListsService listsService,
-			@Named("base") ClassDefService classDefService) {
+			 ClassDefService classDefService) {
 		super( ec, repository, RuleMapper.INSTANCE);
 		this.binaryResourceService=binaryResourceService;
 		this.listsService=listsService;

@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.alnt.platform.application.logger.LoggerHelper;
 import com.alnt.platform.application.logger.domain.dto.AppLogDTO;
 import com.alnt.platform.application.logger.service.Logger;
@@ -170,6 +172,7 @@ public class RuleEngineController extends BaseController<Rule,RuleDTO> {
 				), ec.current())
 				.exceptionally(
 			            t -> {
+			            	System.err.print(ExceptionUtils.getStackTrace((Exception)t));
 			            	return internalServerError(
 									Json.toJson(new ApiResponse(Boolean.TRUE, ((Exception)t).getMessage(), null))
 						);
