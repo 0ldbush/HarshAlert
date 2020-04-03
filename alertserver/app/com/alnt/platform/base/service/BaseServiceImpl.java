@@ -42,7 +42,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
         this.ec = ec;
         this.repository = repository;
         this.mapper = mapper;
-        this.cacheConfig= ConfigFactory.load().getStringList("play.local.cache.config.entities");
+        this.cacheConfig= ConfigFactory.load().getStringList("play.alert.cache.config.entities");
        
     }
     
