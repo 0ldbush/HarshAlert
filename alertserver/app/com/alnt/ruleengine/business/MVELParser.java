@@ -7,6 +7,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import javax.inject.Singleton;
 
 import org.mvel2.MVEL;
+import org.mvel2.ParserConfiguration;
 import org.mvel2.ParserContext;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -25,24 +26,34 @@ public class MVELParser<INPUT_DATA> {
 //        }
 //        return false;
 //    }
-    
+	
 	private static Cache<String, Serializable> compiledExpressionCache = Caffeine.newBuilder()
 			  .expireAfterWrite(15, TimeUnit.MINUTES)
 			  .maximumSize(20000)
 			  .build();
+	private  ParserContext parserCcontext ;
+	
+	
+	public MVELParser() {
+		super();
+    	if(parserCcontext == null) {
+    		ParserConfiguration parserConfiguration = new ParserConfiguration();
+    		parserConfiguration.setClassLoader(Thread.currentThread().getContextClassLoader());
+    		parserCcontext = new ParserContext(parserConfiguration);
+    	}
+    }
+	
 	
     public boolean parseMvelExpression( String expression, INPUT_DATA inputObjects){
         try {
         	
 //        	Object executeExpression =  MVEL.eval(expression.toCharArray(),inputObjects);
-        	Object executeExpression =  MVEL.eval(expression,inputObjects);
+//        	Object executeExpression =  MVEL.eval(expression,inputObjects);
+        	Serializable compiledExpression = compiledExpressionCache.get(expression, (key) -> {
+        		return MVEL.compileExpression(expression, parserCcontext);
+        	});
 
-//        	Serializable compiledExpression = compiledExpressionCache.get(expression, (key) -> {
-//        		ParserContext context = new ParserContext();
-//        		return MVEL.compileExpression(expression, context);
-//        	});
-//
-//    		Object executeExpression = MVEL.executeExpression(compiledExpression, inputObjects);
+    		Object executeExpression = MVEL.executeExpression(compiledExpression, inputObjects);
 
             return executeExpression != null ? (Boolean)executeExpression : false;
         }catch (Exception e){

@@ -8,7 +8,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,8 +25,6 @@ import com.alnt.platform.base.response.ApiMessage;
 import com.alnt.platform.base.response.ApiMessageType;
 import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.platform.base.service.BaseService;
-import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
-import com.alnt.platform.modules.PlatformModule;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
