@@ -38,11 +38,7 @@ public class BasePostInsertEventListener extends BaseEventListener implements Po
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
 		if(this.classDefService == null) {
-			this.classDefService = injector.instanceOf(
-					new play.inject.BindingKey<ClassDefService>(
-							ClassDefService.class, 
-							Optional.of(new QualifierInstance<Named>(Names.named("localcache")))
-			).asScala());
+			this.classDefService = injector.instanceOf(ClassDefService.class);
 		}
 		if(this.timelineRepository == null) {
 			timelineRepository = injector.instanceOf(TimelineRepository.class);

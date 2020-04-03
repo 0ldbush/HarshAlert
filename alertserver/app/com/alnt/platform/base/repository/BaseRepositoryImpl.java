@@ -100,7 +100,7 @@ public abstract class BaseRepositoryImpl<E extends Entity> implements BaseReposi
         this.dataModelClass = dataModelClass;
     }
     
-	protected Class<E> getDomainClass() {
+	public Class<E> getDomainClass() {
 		return this.dataModelClass;
 	}
 	

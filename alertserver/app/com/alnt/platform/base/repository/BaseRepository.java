@@ -12,6 +12,7 @@ import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
 
 public interface BaseRepository<E extends Entity> {
+	Class<E> getDomainClass();
 	
 	CompletionStage<Stream<E>> list(RequestDetails requestDetails );
 
