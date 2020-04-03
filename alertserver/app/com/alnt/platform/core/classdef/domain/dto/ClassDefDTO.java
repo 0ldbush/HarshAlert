@@ -3,6 +3,8 @@ package com.alnt.platform.core.classdef.domain.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import com.alnt.platform.base.domain.dto.BaseMasterDTO;
 
 
@@ -104,7 +106,5 @@ public class ClassDefDTO extends BaseMasterDTO{
 	public void setEditable(Boolean editable) {
 		this.editable = editable;
 	}   
-	
-	
-	
+		
 }

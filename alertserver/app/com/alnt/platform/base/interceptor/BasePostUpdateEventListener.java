@@ -41,11 +41,7 @@ public class BasePostUpdateEventListener extends BaseEventListener implements Po
 	public void onPostUpdate(PostUpdateEvent event) {
 		try {
 			if(this.classDefService == null) {
-				this.classDefService = injector.instanceOf(
-						new play.inject.BindingKey<ClassDefService>(
-								ClassDefService.class, 
-								Optional.of(new QualifierInstance<Named>(Names.named("localcache")))
-				).asScala());
+				this.classDefService = injector.instanceOf(ClassDefService.class);
 			}
 			if(this.timelineRepository == null) {
 				timelineRepository = injector.instanceOf(TimelineRepository.class);

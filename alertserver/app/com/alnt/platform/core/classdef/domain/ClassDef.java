@@ -51,6 +51,22 @@ public class ClassDef extends BaseMasterEntity{
 	@Column(name="EDITABLE ")
     private Boolean editable;
     
+	public Boolean getDocNumberSupported() {
+		return docNumberSupported;
+	}
+
+	public void setDocNumberSupported(Boolean docNumberSupported) {
+		this.docNumberSupported = docNumberSupported;
+	}
+
+	public Boolean getEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
+	}
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="CLASS_EXT_ID", referencedColumnName="EXT_ID", foreignKey = @ForeignKey)
     private List<FieldDef> fieldDefs = new ArrayList<FieldDef>();
@@ -111,22 +127,5 @@ public class ClassDef extends BaseMasterEntity{
 		this.className = className;
 	}
 
-	public Boolean getDocNumberSupported() {
-		return docNumberSupported;
-	}
-
-	public void setDocNumberSupported(Boolean docNumberSupported) {
-		this.docNumberSupported = docNumberSupported;
-	}
-
-	public Boolean getEditable() {
-		return editable;
-	}
-
-	public void setEditable(Boolean editable) {
-		this.editable = editable;
-	}   
-	
-	
 	
 }

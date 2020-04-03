@@ -23,7 +23,7 @@ public class LoggerImpl implements Logger {
 
 	@Override
 	public void db(RequestDetails requestDetails, AppLogDTO appLog) {
-		System.out.println("in db");
+//		System.out.println("in db");
 		if(StringUtils.isBlank(appLog.getBusObjCat()))
 		appLog.setBusObjCat(log.getName());
 		appLogService.save(requestDetails, appLog);

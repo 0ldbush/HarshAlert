@@ -25,7 +25,6 @@ import com.alnt.platform.base.response.ApiMessage;
 import com.alnt.platform.base.response.ApiMessageType;
 import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.platform.base.service.BaseService;
-import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
@@ -43,6 +42,7 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 	protected final HttpExecutionContext ec;
 	
 	@Inject
+//	@Named(PlatformModule.LOCAL_CACHE)
 	protected UserService userService;
 
 	private final BaseService<E, D> service;

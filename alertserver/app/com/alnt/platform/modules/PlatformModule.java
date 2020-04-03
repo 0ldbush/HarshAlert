@@ -1,9 +1,6 @@
 package com.alnt.platform.modules;
 import com.alnt.platform.application.security.jwt.JwtValidator;
 import com.alnt.platform.application.security.jwt.JwtValidatorImpl;
-import com.alnt.platform.core.classdef.service.ClassDefLocalCachedServiceImpl;
-import com.alnt.platform.core.classdef.service.ClassDefService;
-import com.alnt.platform.core.classdef.service.ClassDefServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
@@ -31,9 +28,9 @@ public class PlatformModule extends AbstractModule {
     public void configure() {
     	bind(JwtValidator.class).to(JwtValidatorImpl.class).asEagerSingleton();
     	
-    	bind(ClassDefService.class).annotatedWith(Names.named(BASE)).to(ClassDefServiceImpl.class);
-    	bind(ClassDefService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ClassDefLocalCachedServiceImpl.class);
-		bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
+		
+    	
+    	bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
 		bind(ConfigSettingService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
 		bind(DocNumberRangeService.class).annotatedWith(Names.named(BASE)).to(DocNumberRangeServiceImpl.class);
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();

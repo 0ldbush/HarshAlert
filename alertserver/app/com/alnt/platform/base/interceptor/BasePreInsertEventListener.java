@@ -14,6 +14,8 @@ import org.hibernate.event.spi.PreInsertEventListener;
 
 import com.alnt.platform.base.domain.BaseMasterEntity;
 import com.alnt.platform.base.domain.BaseSettingEntity;
+import com.alnt.platform.base.exception.BaseBusinessException;
+import com.alnt.platform.base.exception.type.ErrorType;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
 import com.google.inject.name.Named;
@@ -58,20 +60,31 @@ public class BasePreInsertEventListener extends BaseEventListener implements Pre
 		        event.getState()[propertiesList.indexOf("extId")] = extId;
 			}
 		} else if(entity instanceof BaseSettingEntity) {
-			
-		}
-		
+			if(StringUtils.isBlank(((BaseSettingEntity) entity).getExtId())) {
+				entity = setExtId(entity, event);
+				String extId = ((BaseSettingEntity) entity).getExtId();
+				
+				String[] properties = event.getPersister().getEntityMetamodel().getPropertyNames();
+		        List<String> propertiesList = Arrays.asList(properties);
+		        event.getState()[propertiesList.indexOf("extId")] = extId;
+			}
+		}		
 		return false;
 	}
 	
 	private Object setExtId(Object entity, AbstractEvent event) {
 		//boolean generateDefault = false;
 		//String extId = null;
-		Optional<Object> extIdOpt = null;
+		Optional<Object> extIdOpt = Optional.of(entity);
 		RequestDetails requestDetails = new RequestDetails();
 		requestDetails.setTenantName((String) event.getSession().getFactory().getProperties().get("alert.tenantName"));
 		try {
 			extIdOpt = this.docNumberRangeService.getDocNumber(requestDetails, entity).toCompletableFuture().get();
+			if(extIdOpt != null && extIdOpt.isPresent()) {				
+				if(extIdOpt.get() instanceof ErrorType ) {
+					throw new BaseBusinessException((ErrorType)extIdOpt.get());
+				}
+			}			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();

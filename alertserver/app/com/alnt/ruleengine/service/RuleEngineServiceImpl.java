@@ -37,14 +37,12 @@ import com.alnt.policyengine.domain.dto.RuleDTO;
 import com.alnt.policyengine.domain.dto.RuleSetDTO;
 import com.alnt.policyengine.service.PolicyGroupService;
 import com.alnt.policyengine.service.PolicyService;
-import com.alnt.policyengine.service.PolicyServiceImpl;
 import com.alnt.policyengine.service.RuleService;
 import com.alnt.ruleengine.business.DefaultInferenceEngine;
 import com.alnt.ruleengine.business.RuleLibrary;
 import com.alnt.ruleengine.domain.dto.DefaultOutput;
 import com.alnt.ruleengine.mapper.RuleMapper;
 import com.alnt.ruleengine.repository.RulesRepository;
-import com.google.inject.name.Named;
 
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -74,7 +72,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 
 	
 	@Inject
-	public RuleEngineServiceImpl(HttpExecutionContext ec, RulesRepository repository,@Named("base") ClassDefService classDefService) {
+	public RuleEngineServiceImpl(HttpExecutionContext ec, RulesRepository repository, ClassDefService classDefService) {
 		
 		super( ec, repository, RuleMapper.INSTANCE);
 		this.classDefService=classDefService;
@@ -187,8 +185,11 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		return attributeList;
 
 	}
-	private Map<String, List<String>> buildAttributeMap(Map<String,Object> map,Map<String, List<String>> attributeMap,List<String> entities )
+	
+	static Map<String, List<String>> attributeMap=new HashMap<String, List<String>>();
+	private Map<String, List<String>> buildAttributeMap(Map<String,Object> map,List<String> entities )
 	{
+		if(!attributeMap.isEmpty()) return attributeMap;
 		class FieldData {
 			Object object;
 			String prefix;
@@ -200,6 +201,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 			}
 
 		}
+		
 
 		Stack<FieldData> stack = new Stack<FieldData>();
 		FieldData data = new FieldData(map, null);
@@ -365,9 +367,10 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 	        //TODO: Here for each call, we are fetching all rules from db. It should be cache.
 		List<String> entities=new ArrayList<String>();
 		List<String> attributeList= buildAttributeList(entities,requestDetails);
-		 map.put("requestMap", buildAttributeMap(map, new HashMap<String, List<String>>(), entities));
-		 map.put("attributeList", attributeList);
+		 
 		 map.put("dsl", rbl);
+		 map.put("requestMap", buildAttributeMap(map, entities));
+		 map.put("attributeList", attributeList);
 		
 		 
 
@@ -386,19 +389,21 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 //		List<String> pgs  = new ArrayList<String>();		
 		
 		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
-		CompletionStage<Stream<List<DefaultOutput>>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
-			return policies.parallel().map(policy -> {
-				return this.applyRuleInternal(policy,map);
-			});
-		});
-		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
+		CompletionStage<List<DefaultOutput>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
-			stream.parallel().forEach(listDO -> {
-				allListDO.addAll(listDO);
+			policies.parallel().forEach(policy -> {
+				allListDO.addAll( this.applyRuleInternal(policy,map));
 			});
 			return allListDO;
 		});
-		return thenApplyAsync2.toCompletableFuture();
+//		CompletionStage<List<DefaultOutput>> thenApplyAsync2 = thenApplyAsync.thenApplyAsync(stream -> {
+//			List<DefaultOutput> allListDO = new ArrayList<>();
+//			stream.parallel().forEach(listDO -> {
+//				allListDO.addAll(listDO);
+//			});
+//			return allListDO;
+//		});
+		return thenApplyAsync.toCompletableFuture();
 		//Punet
 //		Stream<CompletionStage<List<DefaultOutput>>> allPgStream = policyGroup.stream().unordered()
 //		.map(pg -> {
@@ -515,7 +520,6 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		List<DefaultOutput> allOp = new ArrayList<>();
 		
 		if(policyDTO.getRuleSets() != null && !policyDTO.getRuleSets().isEmpty()) {
-			List<Rule> allRUles = new ArrayList<>();
 			policyDTO.getRuleSets().parallelStream().forEach(ruleSet -> {
 				if(ruleSet.isActive()) {
 					ruleSet.getRules().parallelStream().forEach(rule -> {

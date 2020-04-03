@@ -72,7 +72,7 @@ public abstract class InferenceEngine<INPUT_DATA, OUTPUT_RESULT> {
 				try {
 					ruleConditionDTOs = Arrays.asList(mapper.readValue(rule.getConditionJson(), RuleConditionDTO[].class));
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
+				//	e.printStackTrace();
 				}
 			
 			Map<String, List<String>> attributeMap = new HashMap<String, List<String>>();
