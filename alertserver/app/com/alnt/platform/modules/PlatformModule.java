@@ -1,4 +1,5 @@
 package com.alnt.platform.modules;
+import com.alnt.platform.application.Startup;
 import com.alnt.platform.application.security.jwt.JwtValidator;
 import com.alnt.platform.application.security.jwt.JwtValidatorImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
@@ -34,5 +35,7 @@ public class PlatformModule extends AbstractModule {
 		bind(ConfigSettingService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
 		bind(DocNumberRangeService.class).annotatedWith(Names.named(BASE)).to(DocNumberRangeServiceImpl.class);
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();
+		bind(Startup.class).asEagerSingleton();
+		
     }
 }

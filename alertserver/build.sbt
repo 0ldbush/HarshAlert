@@ -120,5 +120,5 @@ EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 // Use .class files instead of generated .scala files for views and routes
 EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.ManagedClasses, EclipseCreateSrc.ManagedResources)
 
-javaOptions += "-Dlog4j.configurationFile=conf/log4j2.xml"
+javaOptions in Universal ++= Seq( "-Dlog4j.configurationFile=conf/log4j2.xml")
 
