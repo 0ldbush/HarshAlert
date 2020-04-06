@@ -1,5 +1,6 @@
 package com.alnt.platform.base.persistence.db.jpa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +106,12 @@ public class DefaultJPAApi implements JPAApi {
                     Persistence.createEntityManagerFactory(pu.unitName, properties));
 		}
 	}
-	List<Tenant> tenantList = this.em("master").createQuery("select t from Tenant t", Tenant.class).getResultList();
+	List<Tenant> tenantList = new ArrayList();
+	try {
+		tenantList = this.em("master").createQuery("select t from Tenant t", Tenant.class).getResultList();
+	}catch(Exception e) {
+		e.printStackTrace();
+	}
 	ImmutableSet.Builder<JPAConfig.PersistenceUnit> persistenceUnits =
 	          new ImmutableSet.Builder<JPAConfig.PersistenceUnit>();
 	tenantList.forEach(tenant -> {

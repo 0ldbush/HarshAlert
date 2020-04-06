@@ -6,6 +6,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.springframework.data.domain.Page;
 
 import com.alnt.platform.base.domain.Entity;
@@ -15,7 +17,9 @@ import com.alnt.platform.base.repository.BaseRepository;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.response.ApiResponse;
+import com.typesafe.config.ConfigFactory;
 
+import play.cache.AsyncCacheApi;
 import play.libs.concurrent.HttpExecutionContext;
 
 
@@ -27,12 +31,19 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	protected BaseMapper<D,E> mapper;
     protected HttpExecutionContext ec;
     
+    @Inject
+    protected AsyncCacheApi cache;
+   
     static final int MAX_SIZE = 1000;
+    
+    List<String> cacheConfig;
     
     public BaseServiceImpl( HttpExecutionContext ec, BaseRepository<E> repository, BaseMapper<D,E> mapper) {
         this.ec = ec;
         this.repository = repository;
         this.mapper = mapper;
+        this.cacheConfig= ConfigFactory.load().getStringList("play.alert.cache.config.entities");
+       
     }
     
 	public BaseRepository<E> getDaoRepository() {
@@ -42,7 +53,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	public BaseMapper<D, E> getMapper() {
 		return mapper;
 	}
-	
+
 	
 	@Override
 	public CompletionStage<Stream<D>> find(RequestDetails requestDetails, SearchCriteria searchCriteria) {
@@ -76,16 +87,37 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 
 	@Override
 	public CompletionStage<Optional<D>> get(RequestDetails requestDetails, Long id) {
+		
+	String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
+	if(cacheConfig!=null && cacheConfig.contains(cacheKeyPrefix))
+	{
+		return cache.getOrElseUpdate(cacheKeyPrefix+"_get_"+id.toString(),() -> {
+			return this.getDaoRepository().get(requestDetails, id).thenApplyAsync(optionalData -> {
+				 return Optional.of(getMapper().entityToDTO(optionalData.get()));
+	        }, ec.current());
+		});
+	}else
+		
+		
 		return this.getDaoRepository().get(requestDetails, id).thenApplyAsync(optionalData -> {
             return Optional.of(getMapper().entityToDTO(optionalData.get()));
         }, ec.current());
 	}
 	
 	@Override
-	public CompletionStage<Stream<D>> getBy(RequestDetails requestDetails,String fieldName, Object value) {
-		return this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
-            return dataList.stream().map(entity -> getMapper().entityToDTO(entity));
-        }, ec.current());
+	public CompletionStage<Stream<D>> getBy(RequestDetails requestDetails, String fieldName, Object value) {
+	
+		String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
+		if (cacheConfig != null && cacheConfig.contains(cacheKeyPrefix)) {
+			return cache.getOrElseUpdate(cacheKeyPrefix+"_getBy_"+fieldName.toString()+"_"+value.toString(),() -> {
+				return this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
+					return dataList.stream().map(entity -> getMapper().entityToDTO(entity));
+		        }, ec.current());
+			});
+		} else
+			return this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
+				return dataList.stream().map(entity -> getMapper().entityToDTO(entity));
+			}, ec.current());
 	}
 
 //	@Override
@@ -97,6 +129,12 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	
 	@Override
 	public CompletionStage<Optional<D>> save(RequestDetails requestDetails, D data) {
+		
+		String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
+		if(cacheConfig!=null && cacheConfig.contains(cacheKeyPrefix) && cache != null  && data.getId() != null)
+		{
+			cache.remove(cacheKeyPrefix+"_get_"+data.getId().toString());
+		} 
 		return this.getDaoRepository().save(requestDetails,  getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
 			return Optional.of(getMapper().entityToDTO(optionalData.get()));
         }, ec.current());

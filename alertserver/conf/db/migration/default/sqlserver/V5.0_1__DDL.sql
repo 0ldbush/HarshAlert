@@ -254,6 +254,14 @@ CREATE TABLE doc_number_range (
 
 
 --
+-- Name: doc_number_range_busobjtype; Type: TABLE; Schema: ; Owner: -
+--
+CREATE TABLE doc_number_range_busobjtype (
+	[doc_num_range_id] [numeric](19, 0) NOT NULL,
+	[bus_obj_type] [varchar](255) NULL
+)
+
+--
 -- Name: field_def; Type: TABLE; Schema: ; Owner: -
 --
 
@@ -857,28 +865,6 @@ CREATE TABLE timeline_chgs (
 
 
 --
--- Name: timeline_ui; Type: TABLE; Schema: ; Owner: -
---
-
-CREATE TABLE timeline_ui (
-    id bigint NOT NULL,
-    busobjcat character varying(255),
-    busobjid bigint,
-    createdon datetime2,
-    eventtypetext character varying(255),
-    eventtype character varying(255),
-    field character varying(255),
-    fieldname character varying(255),
-    fieldtooltip character varying(255),
-    int_status integer,
-    newvalue character varying(255),
-    oldvalue character varying(255),
-    user_id bigint,
-    username character varying(255)
-);
-
-
---
 -- Name: user_job_role; Type: TABLE; Schema: ; Owner: -
 --
 
@@ -1117,6 +1103,58 @@ CREATE TABLE workflow_step_workflow_recipient_xref (
     workflow_step_id bigint NOT NULL
 );
 
+--
+-- Name: app_log; Type: TABLE; Schema: ; Owner: -
+--
+
+CREATE TABLE app_log (
+    id bigint NOT NULL,
+    changed_by bigint NULL,
+    changed_on datetime2 NULL,
+    created_by bigint NULL,
+    created_on datetime2 NULL,
+    int_status int NULL,
+    bus_obj_cat varchar(255) NULL,
+    bus_obj_id bigint NULL,
+    ext_id varchar(50) NULL,
+    "text" varchar(255) NULL,
+    "type" varchar(255) NULL,
+    admin_message bit NULL,
+    body varchar(max) NULL,
+    conversation_id varchar(255) NULL,
+    form bit NULL,
+    message_master_id varchar(255) NULL,
+    priority varchar(255) NULL,
+    subject varchar(255) NULL,
+    stage varchar(255) NULL
+);
+
+
+--
+-- Name: timeline_ui; Type: VIEW; Schema: ; Owner: -
+--
+
+CREATE VIEW timeline_ui
+ AS
+ SELECT concat(timeline.id, timeline_chgs.id) AS id,
+    timeline_chgs.subtype AS eventtype,
+    timeline_chgs.subtype AS eventtypetext,
+    timeline.busobjcat,
+    timeline.busobjid,
+    timeline_chgs.field,
+    field_def.label AS fieldname,
+    field_def.tooltip AS fieldtooltip,
+    timeline_chgs.oldvalue,
+    timeline_chgs.newvalue,
+    timeline.createdby AS "user",
+    users.first_name AS username,
+    timeline.createdon,
+    0 AS int_status
+   FROM timeline_chgs
+     LEFT JOIN timeline ON timeline.id = timeline_chgs.timelineid
+     LEFT JOIN users ON users.id = timeline.createdby
+     LEFT JOIN field_def ON cast(field_def.field_name as varchar(max)) = cast(timeline_chgs.field as varchar(max))
+  ORDER BY timeline.createdon DESC;
 
 --
 -- Name: activity activity_pkey; Type: CONSTRAINT; Schema: ; Owner: -
@@ -1437,15 +1475,6 @@ ALTER TABLE ONLY timeline_chgs
 
 ALTER TABLE ONLY timeline
     ADD CONSTRAINT timeline_pkey PRIMARY KEY (id);
-
-
---
--- Name: timeline_ui timeline_ui_pkey; Type: CONSTRAINT; Schema: ; Owner: -
---
-
-ALTER TABLE ONLY timeline_ui
-    ADD CONSTRAINT timeline_ui_pkey PRIMARY KEY (id);
-
 
 --
 -- Name: activity uk_1e7fkj3jgq2ym0gtvnxi3b2a2; Type: CONSTRAINT; Schema: ; Owner: -
@@ -1877,5 +1906,22 @@ ALTER TABLE ONLY policy_rule_set_xref
 
 ALTER TABLE ONLY attachment
     ADD CONSTRAINT fksxlgw8vqpwi8oo5yk0e0dysod FOREIGN KEY (type) REFERENCES attachment_type(ext_id);
+
+
+--
+-- Name: app_log app_log_pkey; Type: CONSTRAINT; Schema: ; Owner: -
+--
+
+ALTER TABLE ONLY app_log
+    ADD CONSTRAINT app_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: doc_number_range_busobjtype FKcqgwg7s6sir1tmw9lt9i91m0s; Type: FK CONSTRAINT; Schema: ; Owner: -
+--
+
+ALTER TABLE ONLY doc_number_range_busobjtype
+    ADD CONSTRAINT FKcqgwg7s6sir1tmw9lt9i91m0s FOREIGN KEY (doc_num_range_id) REFERENCES doc_number_range(id);
+
 
 
