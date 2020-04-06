@@ -9,7 +9,7 @@ INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,creat
 ;
 INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,created_on,description,ext_id,"text",bus_function,bus_obj_cat,default_mode,display_only,follow_ons,full_namespace,help_text_url,hidden,icon,keywords,mapped_namespace,setting_act,title,doc_number) VALUES 
 (9,0,NULL,NULL,NULL,NULL,NULL,'policyengine.mitigationcontrol','Mitigation Control','','','update','false','','ae/policyengine/mitigationcontrol','',NULL,NULL,'','ae.policyengine.mitigationcontrol',NULL,NULL,NULL)
-,(11,0,NULL,NULL,NULL,NULL,NULL,'setting.classdef','Class Definition',NULL,NULL,'update','false',NULL,'ae/setting/classdef',NULL,NULL,NULL,NULL,'ae.setting.classdef','false',NULL,NULL)
+,(11,0,NULL,NULL,NULL,NULL,NULL,'setting.classdef','Class Definition',NULL,NULL,'update','false',NULL,'platform/view/classdef',NULL,NULL,NULL,NULL,'platform.view.classdef','false',NULL,NULL)
 ,(12,0,NULL,NULL,NULL,NULL,NULL,'setting.list','List',NULL,NULL,'update','false',NULL,'platform/view/lists',NULL,NULL,NULL,NULL,'platform.view.lists','false',NULL,NULL)
 ,(13,0,NULL,NULL,NULL,NULL,NULL,'setting.user','User',NULL,NULL,'update','false',NULL,'ae/setting/user',NULL,NULL,NULL,NULL,'ae.setting.user','false',NULL,NULL)
 ,(14,0,NULL,NULL,NULL,NULL,NULL,'setting.role','Role',NULL,NULL,'update','false',NULL,'ae/setting/role',NULL,NULL,NULL,NULL,'ae.setting.role','false',NULL,NULL)
