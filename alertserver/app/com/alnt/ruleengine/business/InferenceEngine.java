@@ -181,7 +181,7 @@ public abstract class InferenceEngine<INPUT_DATA, OUTPUT_RESULT> {
     private boolean filterRulesSeq (RuleDTO rule, INPUT_DATA inputData) {
     	
 				String condition = rule.getCondition();
-				boolean matched = ruleParser.parseCondition(condition, inputData);
+				boolean matched = ruleParser.parseCondition(rule, inputData);
 //				System.err.print(".");
 				return matched;
 		
@@ -190,7 +190,7 @@ public abstract class InferenceEngine<INPUT_DATA, OUTPUT_RESULT> {
     private Stream<RuleDTO> filterRules (Stream<RuleDTO> ruleDTOStream, INPUT_DATA inputData) {
     	return ruleDTOStream.filter( (rule) -> {
 				String condition = rule.getCondition();
-				boolean matched = ruleParser.parseCondition(condition, inputData);
+				boolean matched = ruleParser.parseCondition(rule, inputData);
 				return matched;
 		});
     }

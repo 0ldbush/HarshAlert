@@ -25,11 +25,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.mvel2.MVEL;
+import org.mvel2.ParserConfiguration;
 import org.mvel2.ParserContext;
 
+import com.alnt.platform.base.domain.BaseEntity.INT_STATUS;
 import com.alnt.platform.base.exception.BaseBusinessException;
 import com.alnt.platform.base.exception.type.ErrorType;
 import com.alnt.platform.base.request.RequestDetails;
+import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.response.ApiMessage;
 import com.alnt.platform.base.response.ApiMessageType;
 import com.alnt.platform.base.response.ApiResponse;
@@ -40,6 +43,7 @@ import com.alnt.platform.core.classdef.domain.dto.FieldDefDTO;
 import com.alnt.platform.core.classdef.service.ClassDefService;
 import com.alnt.platform.core.lists.domain.dto.ListEntriesDTO;
 import com.alnt.platform.core.lists.service.ListsService;
+import com.alnt.policyengine.domain.Policy;
 import com.alnt.policyengine.domain.Rule;
 import com.alnt.policyengine.domain.dto.RuleConditionDTO;
 import com.alnt.policyengine.domain.dto.RuleDTO;
@@ -47,6 +51,8 @@ import com.alnt.policyengine.domain.dto.RuleExpressionDTO;
 import com.alnt.policyengine.domain.dto.UploadRuleDTO;
 import com.alnt.ruleengine.mapper.RuleMapper;
 import com.alnt.ruleengine.repository.RulesRepository;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.monitorjbl.xlsx.StreamingReader;
 
 import play.libs.Json;
@@ -60,6 +66,8 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	private BinaryResourceService binaryResourceService;
 	
 	private ListsService listsService;
+	private  ParserContext parserContext ;
+	private  Cache<String, Object> compiledExpressionCache ;
 	
 	@Inject
 	public RuleServiceImpl(HttpExecutionContext ec, RulesRepository repository,BinaryResourceService binaryResourceService,ListsService listsService,
@@ -68,6 +76,10 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		this.binaryResourceService=binaryResourceService;
 		this.listsService=listsService;
 		this.classDefService=classDefService;
+		ParserConfiguration parserConfiguration = new ParserConfiguration();
+		parserConfiguration.setClassLoader(Thread.currentThread().getContextClassLoader());
+		this.parserContext = new ParserContext(parserConfiguration);
+		this.compiledExpressionCache=Caffeine.newBuilder().maximumSize(20000).build();
 	}
 
 	@Override
@@ -503,5 +515,43 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
         if (StringUtils.isBlank(text)) return expBuilder;
         return expBuilder.append(" ").append(text);
     }
+   
+	@Override
+	public void afterSave(List<Optional<Rule>> optionals) {
+		optionals.parallelStream().forEach(optional -> {
+			if (optional.isPresent()) {
+				Rule rule = optional.get();
+				if (rule.getIntStatus() == INT_STATUS.ACTIVE.getValue()) {
+					Serializable compiledExpression = MVEL.compileExpression(rule.getCondition(),parserContext);
+					compiledExpressionCache.put(rule.getId().toString(), compiledExpression);
+				}
+			}
+		});
+	}
+   
+	@Override
+	public void loadCache() {
+		RequestDetails requestDetails = new RequestDetails();
+		requestDetails.setTenantName("master");
+		SearchCriteria searchCriteria = new SearchCriteria();
+		searchCriteria.setApplyChangedOnSort(false);
+		compiledExpressionCache.put("parserContext", parserContext);
+		this.getDaoRepository().list(requestDetails).thenApplyAsync(stream -> {
+			stream.parallel().forEach(rule -> {
+				if (rule.getIntStatus() == INT_STATUS.ACTIVE.getValue()) {
+					Serializable compiledExpression = MVEL.compileExpression(rule.getCondition(), parserContext);
+					compiledExpressionCache.put(rule.getId().toString(), compiledExpression);
+				}
+
+			});
+			return null;
+		}, ec.current());
+	}
+
+	@Override
+	public Cache<String, Object> getCompiledExpressionCache() {
+		return compiledExpressionCache;
+	}
+
    
 }
