@@ -32,7 +32,7 @@ public class Attachment extends BaseSocialEntity {
 	@Column(name = "SHARED")
 	private boolean shared;
 
-	@ManyToOne(targetEntity = AttachmentType.class, optional = false, cascade = CascadeType.REFRESH)
+	@ManyToOne(targetEntity = AttachmentType.class, optional = true, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "TYPE", referencedColumnName = "EXT_ID", foreignKey = @ForeignKey, insertable = false, updatable = false)
 	private AttachmentType attachmentType;
 
