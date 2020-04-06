@@ -27,7 +27,5 @@ INSERT INTO list_entries (id,int_status,entry_code,entry_name,list_code, entry_t
 ,(22,0,'Preventive','Preventive','ENFORCEMENTTYPE', '')
 ,(23,0,'Suggestive','Suggestive','ENFORCEMENTTYPE', '')
 ,(24,0,'DISPLAY','Display','ACCESSLEVEL', '')
-,(25,0,'CREATE','Create','ACCESSLEVEL', '')
-,(26,0,'EDIT','Edit','ACCESSLEVEL', '')
-,(27,0,'DELETE','Delete','ACCESSLEVEL', '')
+,(25,0,'UPDATE','Update','ACCESSLEVEL', '')
 ;
