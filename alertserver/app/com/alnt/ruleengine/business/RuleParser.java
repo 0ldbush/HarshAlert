@@ -8,6 +8,8 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alnt.policyengine.domain.dto.RuleDTO;
+
 @Singleton
 public class RuleParser<INPUT_DATA, OUTPUT_RESULT> {
 
@@ -29,15 +31,15 @@ public class RuleParser<INPUT_DATA, OUTPUT_RESULT> {
      * @param expression
      * @param inputData
      */
-    public boolean parseCondition(String expression, INPUT_DATA inputData) {
+    public boolean parseCondition(RuleDTO rule, INPUT_DATA inputData) {
     	
-    	if(StringUtils.isBlank(expression)) return false;
+    	if(StringUtils.isBlank(rule.getCondition())) return false;
        // String resolvedDslExpression = dslParser.resolveDomainSpecificKeywords(expression);
-        String resolvedDslExpression = expression;
+        String resolvedDslExpression = rule.getCondition();
         Map<String, Object> input = new HashMap<>();
         input.put(INPUT_KEYWORD, inputData);
        
-        boolean match = mvelParser.parseMvelExpression(resolvedDslExpression, inputData);
+        boolean match = mvelParser.parseMvelExpression(rule, inputData);
         return match;
     }
 
