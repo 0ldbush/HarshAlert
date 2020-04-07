@@ -12,7 +12,7 @@ public class DocNumberRangeDTO extends BaseSettingDTO{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Boolean fiscalYearRange;
+	private Boolean fiscalYearRange = false;
 
 	//Number range is dependent on, or varies by, company code	
 	//private Boolean companyRange;
@@ -33,7 +33,7 @@ public class DocNumberRangeDTO extends BaseSettingDTO{
 	private String internalRangeFormat;
 
 	//Avoid missing numbers by ensuring a contiguous range	
-	private Boolean noMissedNumbers;
+	private Boolean noMissedNumbers=false;
 
 	//Start point for externally numbered documents (user cannot input document number below this value)	
 	private String externalRangeStart;
@@ -45,16 +45,16 @@ public class DocNumberRangeDTO extends BaseSettingDTO{
 	private String externalRangeFormat;
 
 	//Multiple objects can have the same code (does not have to be unique)	
-	private Boolean duplicatesAllowed;
+	private Boolean duplicatesAllowed=false;
 
 	//Business document number or code can be changed after initial set-up	
-	private Boolean codeEditAllowed;
+	private Boolean codeEditAllowed=false;
 
 	//Maximum field length	
 	private Integer maxLength;
 
 	//[RefElementID:RemoveLeadingZeros] Remove Leading Zeros	
-	private Boolean removeLeadingZeros;
+	private Boolean removeLeadingZeros=true;
 	
 	private List<String> busObjTypes = new ArrayList<String>();
 
