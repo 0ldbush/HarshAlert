@@ -67,12 +67,15 @@ public class DocNumberRangeServiceImpl extends BaseServiceImpl<DocNumberRange, D
 		try {
 			DocNumberRequestDTO docNumberRequestDTO = new DocNumberRequestDTO();
 			String busObjTypeId = null;
+			String userDocNum = null;
 			if(entity instanceof BaseMasterEntity) {
 				busObjTypeId = ((BaseMasterEntity) entity).getType();
+				userDocNum = ((BaseMasterEntity) entity).getExtId();
 			} 
 			docNumberRequestDTO.setBusObjCat(getBusObjCat(entity));
 			docNumberRequestDTO.setBusObjCatClazz(getBusObjCatClazz(entity));
 			docNumberRequestDTO.setBusObjTypeId(busObjTypeId);
+			docNumberRequestDTO.setUserDocNum(userDocNum);
 			if(entity instanceof BaseMasterEntity || entity instanceof BaseSettingEntity) {
 				Optional<String> docNumber = docNumber(requestDetails, docNumberRequestDTO);
 				if(docNumber!= null && docNumber.isPresent()) {
