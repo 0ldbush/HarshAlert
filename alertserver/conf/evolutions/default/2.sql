@@ -147,15 +147,15 @@ INSERT INTO aehsc.policy_group (id,changed_by,changed_on,created_by,created_on,i
 ;
 
 INSERT INTO aehsc.doc_number_range (id,changed_by,changed_on,created_by,created_on,int_status,description,doc_number,ext_id,"text",bus_obj_cat,code_edit_allowed,company_range,duplicates_allowed,external_range_end,external_range_format,external_range_start,fiscal_year_range,internal_range_end,internal_range_format,internal_range_start,max_length,no_missed_numbers,remove_leading_zeros,user_input_extid) VALUES 
-(1,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'ResponseCode','false','false','false',NULL,NULL,NULL,'false','RES-999999','RES-NNNNNN','RES-000001',11,'false','true','Never')
-,(2,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'MitigationControl','false','false','false',NULL,NULL,NULL,'false','MIT-999999','MIT-NNNNNN','MIT-000001',11,'false','true','Never')
-,(3,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'RuleSet','false','false','false',NULL,NULL,NULL,'false','RST-999999','RST-NNNNNN','RST-000001',11,'false','true','Never')
-,(4,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'Risk','false','false','false',NULL,NULL,NULL,'false','RSK-999999','RSK-NNNNNN','RSK-000001',11,'false','true','Never')
-,(5,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'Role','false','false','false',NULL,NULL,NULL,'false','ROL-999999','ROL-NNNNNN ','ROL-000001',11,'false','true','Never')
-,(6,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'Policy','false','false','false',NULL,NULL,NULL,'false','POL-999999','POL-NNNNNN','POL-000001',11,'false','true','Never')
-,(7,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'Rule','false','false','false',NULL,NULL,NULL,'false','RUL-999999','RUL-NNNNNN','RUL-000001',11,'false','true','Never')
-,(8,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'User','false','false','false',NULL,NULL,NULL,'false','USR-999999','USR-NNNNNN','USR-000001',11,'false','true','Never')
-,(9,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,'PolicyGroup','false','false','false',NULL,NULL,NULL,'false','PGR-999999','PGR-NNNNNN','PGR-000001',11,'false','true','Never')
+(1,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'ResponseCode','false','false','false',NULL,NULL,NULL,'false','RES-999999','RES-NNNNNN','RES-000001',11,'false','true','Never')
+,(2,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'MitigationControl','false','false','false',NULL,NULL,NULL,'false','MIT-999999','MIT-NNNNNN','MIT-000001',11,'false','true','Never')
+,(3,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'RuleSet','false','false','false',NULL,NULL,NULL,'false','RST-999999','RST-NNNNNN','RST-000001',11,'false','true','Never')
+,(4,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'Risk','false','false','false',NULL,NULL,NULL,'false','RSK-999999','RSK-NNNNNN','RSK-000001',11,'false','true','Never')
+,(5,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'Role','false','false','false',NULL,NULL,NULL,'false','ROL-999999','ROL-NNNNNN ','ROL-000001',11,'false','true','Never')
+,(6,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'Policy','false','false','false',NULL,NULL,NULL,'false','POL-999999','POL-NNNNNN','POL-000001',11,'false','true','Never')
+,(7,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'Rule','false','false','false',NULL,NULL,NULL,'false','RUL-999999','RUL-NNNNNN','RUL-000001',11,'false','true','Never')
+,(8,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'User','false','false','false',NULL,NULL,NULL,'false','USR-999999','USR-NNNNNN','USR-000001',11,'false','true','Never')
+,(9,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,'PolicyGroup','false','false','false',NULL,NULL,NULL,'false','PGR-999999','PGR-NNNNNN','PGR-000001',11,'false','true','Never')
 ;
 
 
