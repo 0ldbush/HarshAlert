@@ -81,7 +81,9 @@ lazy val root = (project in file(".")).
 	//json
 	"com.jayway.jsonpath" % "json-path" % "2.4.0",
 	
-	"org.flywaydb" %% "flyway-play" % "6.0.0"
+	"org.flywaydb" %% "flyway-play" % "6.0.0",
+	
+	"org.mockito" % "mockito-junit-jupiter" % "3.3.3" % Test
 	
 	
  	)
