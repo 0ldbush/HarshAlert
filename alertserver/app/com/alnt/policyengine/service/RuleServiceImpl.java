@@ -3,14 +3,15 @@ package com.alnt.policyengine.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
@@ -42,8 +43,8 @@ import com.alnt.platform.core.classdef.domain.dto.ClassDefDTO;
 import com.alnt.platform.core.classdef.domain.dto.FieldDefDTO;
 import com.alnt.platform.core.classdef.service.ClassDefService;
 import com.alnt.platform.core.lists.domain.dto.ListEntriesDTO;
+import com.alnt.platform.core.lists.domain.dto.ListsDTO;
 import com.alnt.platform.core.lists.service.ListsService;
-import com.alnt.policyengine.domain.Policy;
 import com.alnt.policyengine.domain.Rule;
 import com.alnt.policyengine.domain.dto.RuleConditionDTO;
 import com.alnt.policyengine.domain.dto.RuleDTO;
@@ -89,27 +90,43 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		return binaryResourceService.get(requestDetails, uploadRuleDTO.getFileId()).thenComposeAsync(resource->{
 			return listsService.getBy(requestDetails, "listCode", "RULEOPERATOR").thenComposeAsync(list->{
 				 Map<String,String> ruleOptMap=
-				 list.map(hh->hh.getListEntries()).findAny().get().stream().collect(Collectors.toMap(ListEntriesDTO::getEntryName, ListEntriesDTO::getEntryCode));
+				 list.map(ListsDTO::getListEntries).findAny().get().stream().collect(Collectors.toMap(ListEntriesDTO::getEntryName, ListEntriesDTO::getEntryCode));
 				return listsService.getBy(requestDetails, "listCode", "RULELOGICALOPERATOR").thenComposeAsync(list1->{
-					List<String> entities=new ArrayList<String>();
-				Map<String,String>	attributeMap=buildAttributeMap(entities,requestDetails);
-						//String entityPrefix=uploadRuleDTO.getEntityId();
+					List<String> entities=new ArrayList<>();
+				
 					Map<String,String> logicalOptMap=
-							 list1.map(hh->hh.getListEntries()).findAny().get().stream().collect(Collectors.toMap(ListEntriesDTO::getEntryName, ListEntriesDTO::getEntryCode));
+							 list1.map(ListsDTO::getListEntries).findAny().get().stream().collect(Collectors.toMap(ListEntriesDTO::getEntryName, ListEntriesDTO::getEntryCode));
 					 File file=new File(resource.get().getPath());
-					 Map<String, String> errors = new HashMap<String, String>();
+					 Map<String, String> errors = new HashMap<>();
 					 int totalCnt=0;
 					 Map<String,RuleExpressionDTO> expressionMap = null;
+					 Map<String,String>	attributeMap=null;
 					 try (FileInputStream fileInputStream = new FileInputStream(file);) {
+							attributeMap=buildAttributeMap(entities,requestDetails);
 							StreamingReader reader = StreamingReader.builder()
 							        .rowCacheSize(100)    // number of rows to keep in memory (defaults to 10)
 							        .bufferSize(4096)     // buffer size to use when reading InputStream to file (defaults to 1024)
 							        .sheetIndex(0)        // index of sheet to use (defaults to 0)
 							        .read(fileInputStream);   
-							expressionMap=new LinkedHashMap<String,RuleExpressionDTO>() ;
-							int ruleNameIdx=0,ruleIdxIdx=0,conditionIdx=0,attrIdx=0,operatorIdx=0,valueIdx=0,rangeIdx=0,enforcementIdx=0,entityIdx=0;
-							final String RULENAME="RuleName",RULEINDEX="RuleIndex",CONDITION="Condition",ATTRIBUTE="Attribute",OPERATOR="Operator",VALUE="Value",
-									RANGE="Range",ENFORCEMENT="Enforcement",ENTITY="Entity";
+							expressionMap=new LinkedHashMap<>() ;
+							int ruleNameIdx=0; 
+							int ruleIdxIdx=0;
+							int conditionIdx=0; 
+							int attrIdx=0;
+							int operatorIdx=0;
+							int valueIdx=0;
+							int rangeIdx=0;
+							int enforcementIdx=0;
+							int entityIdx=0;
+							final String RULENAME="RuleName";
+							final String RULEINDEX="RuleIndex";
+							final String CONDITION="Condition";
+							final String ATTRIBUTE="Attribute";
+							final String OPERATOR="Operator";
+							final String VALUE="Value";
+							final String RANGE="Range",ENFORCEMENT="Enforcement",ENTITY="Entity";
+							final String BLANK_INVALID=" is blank or invalid";
+							final String BLANK=" is blank";
 							for (Row row : reader) {
 								if(row.getRowNum()==0) 
 								{
@@ -154,8 +171,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 											}
 										}
 									}
-								continue;	
-								}
+								}else {
 								List<RuleConditionDTO> ruleConditionDTOs=null;
 								RuleConditionDTO ruleConditionDTO=null;
 								
@@ -177,40 +193,40 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 								Integer range=rangeCell!=null && Cell.CELL_TYPE_NUMERIC==rangeCell.getCellType()?(int)rangeCell.getNumericCellValue(): null;
 								String enforcement=enforcementCell!=null ?enforcementCell.getStringCellValue():null;
 								String entityPrefix=entityCell!=null?entityCell.getStringCellValue():null;
-								if(StringUtils.isBlank(ruleName) && StringUtils.isBlank(ruleIdx) && StringUtils.isBlank(value)  && StringUtils.isBlank(condition) && StringUtils.isBlank(operator) && StringUtils.isBlank(attribute) && StringUtils.isBlank(entityPrefix) )
-									continue;
+								if(! (StringUtils.isBlank(ruleName) && StringUtils.isBlank(ruleIdx) && StringUtils.isBlank(value)  && StringUtils.isBlank(condition) && StringUtils.isBlank(operator) && StringUtils.isBlank(attribute) && StringUtils.isBlank(entityPrefix)) )
+								{
 								StringBuilder errorMsg=new StringBuilder();
 								if(StringUtils.isBlank(ruleName) )
-									errorMsg.append(RULENAME).append(" is blank");
+									errorMsg.append(RULENAME).append(BLANK);
 								if( StringUtils.isBlank(ruleIdx) || !NumberUtils.isParsable(ruleIdx))
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(RULEINDEX).append(" is blank or not a number");
+									if(errorMsg.length()>0) { errorMsg.append("|");}
+									 errorMsg.append(RULEINDEX).append(BLANK_INVALID);
 								}
 								if(StringUtils.isBlank(value))
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(VALUE).append(" is blank");
+									if(errorMsg.length()>0) {errorMsg.append("|");}
+									 errorMsg.append(VALUE).append(BLANK);
 								}
 								if((expressionMap.containsKey(ruleName) && StringUtils.isBlank(condition)) || ( StringUtils.isNotBlank(condition) && !logicalOptMap.containsKey(condition)) )
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(CONDITION).append(" is blank or invalid");
+									if(errorMsg.length()>0) { errorMsg.append("|");}
+									 errorMsg.append(CONDITION).append(BLANK_INVALID);
 								}
 								if( StringUtils.isBlank(operator) || ( StringUtils.isNotBlank(operator) && !ruleOptMap.containsKey(operator) ) )
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(OPERATOR).append(" is blank or invalid");
+									if(errorMsg.length()>0) {errorMsg.append("|");}
+									 errorMsg.append(OPERATOR).append(BLANK_INVALID);
 								}
 								if(StringUtils.isBlank(attribute) || ( StringUtils.isNotBlank(attribute) && !attributeMap.containsKey(attribute) ))
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(ATTRIBUTE).append(" is blank or invalid");
+									if(errorMsg.length()>0) {errorMsg.append("|");}
+									 errorMsg.append(ATTRIBUTE).append(BLANK_INVALID);
 								}
 								if(StringUtils.isBlank(entityPrefix) ||( StringUtils.isNotBlank(entityPrefix) && !entities.contains(entityPrefix) ))
 								{
-									if(errorMsg.length()>0) errorMsg.append("|");
-									 errorMsg.append(ENTITY).append(" is blank or invalid");
+									if(errorMsg.length()>0) {errorMsg.append("|");}
+									 errorMsg.append(ENTITY).append(BLANK_INVALID);
 								}
 								if(errorMsg.length()>0)
 								    {
@@ -221,12 +237,12 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 									}
 									else {
 										errors.put(ruleName, new StringBuilder(String.valueOf(row.getRowNum())).append("=").append(errorMsg).toString()); 
-									totalCnt++;
+										if(!expressionMap.containsKey(ruleName)) 
+										{totalCnt++;}
 									}
-									continue;
 								    }
 								
-								if(errors.containsKey(ruleName)) continue;
+								if(errorMsg.length()==0 && !errors.containsKey(ruleName)) {
 						        boolean isFirst=false;
 									if(expressionMap.containsKey(ruleName)) 
 										{
@@ -241,7 +257,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 										ruleExpressionDTO.setDescription(ruleName);
 										ruleExpressionDTO.setEnforcement(enforcement);
 										ruleExpressionDTO.setEntityPrefix(entityPrefix);
-										ruleConditionDTOs=new ArrayList<RuleConditionDTO>();
+										ruleConditionDTOs=new ArrayList<>();
 										ruleExpressionDTO.setRuleConditionDTOs(ruleConditionDTOs);
 										expressionMap.put(ruleName, ruleExpressionDTO);
 										}
@@ -249,18 +265,22 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 									ruleConditionDTO=getOjectBySequenceNo(ruleConditionDTOs, ruleIdx);
 									ruleConditionDTO.setAttribute(attribute);
 									if(!isFirst)
+									{
 									ruleConditionDTO.setLogicalOperator(logicalOptMap.get(condition));
+									}
 									ruleConditionDTO.setOperator(ruleOptMap.get(operator));
 									ruleConditionDTO.setValue(Arrays.asList(value.split("\\s*,\\s*")));
 									ruleConditionDTO.setRange(range);
+								}
+								}
 							
-							
+							}
 							}
 						}catch (Exception e) {
 							throw new CompletionException(e);
 						}
 					 
-					 List<ApiMessage> successMessages = new ArrayList<ApiMessage>();
+					 List<ApiMessage> successMessages = new ArrayList<>();
 					 ApiMessage message = new ApiMessage();
 					 if(errors.isEmpty()) {
 						 message.setMessageText("Rules uploaded successfully");
@@ -297,14 +317,14 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	}
 	
 	
-	private Map<String, String> buildAttributeMap(List<String> entities ,RequestDetails requestDetails )
+	private Map<String, String> buildAttributeMap(List<String> entities ,RequestDetails requestDetails ) throws InterruptedException, ExecutionException
 	{
        if(attributeMapMM != null) {
 			
 			entities.addAll(entitiesMM);
 			return attributeMapMM;
 		}
-		  Map<String, String> attributeMap=new HashMap<String, String>();
+		  Map<String, String> attributeMap=new HashMap<>();
 			class FieldData
 			{
 				String  extId;
@@ -318,31 +338,20 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 				}
 				
 			}
-			Stack<FieldData> stack=new Stack<FieldData>();
-			 try {
+			Deque<FieldData> stack=new ArrayDeque<>();
 				classDefService.getBy(requestDetails, "isRuleParent", true).toCompletableFuture().get().forEach(data->{
 					stack.add(new FieldData(data.getExtId(), null,null));
 					entities.add(data.getExtId());
 				});
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				throw new CompletionException(e1);
-			}
+			
 			
 		     while(!stack.isEmpty())
 		     {
 		    	 FieldData fieldData=stack.pop();
-		    	// TODO: Sequential database call , needs to find alternative
-		    	
 		    		 ClassDefDTO classDefDTO;
-					try {
-						classDefDTO = classDefService.getBy(requestDetails, "extId", fieldData.extId).toCompletableFuture().get().findAny().get();
-					} catch (InterruptedException | ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						throw new CompletionException(e);
-					}
+						classDefService.getBy(requestDetails, "extId", fieldData.extId). toCompletableFuture(). get().findAny();
+						classDefDTO = classDefService.getBy(requestDetails, "extId", fieldData.extId). toCompletableFuture(). get().findAny().orElse(null);
+					if(classDefDTO!=null)
 		    		 for(FieldDefDTO fieldDefDTO:classDefDTO.getFieldDefs())
 		 			{
 		 				if(fieldDefDTO.getIsList())
@@ -373,9 +382,10 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	
 	private CompletionStage<List<Optional<RuleDTO>>> ruleExcelSave(RequestDetails requestDetails,Map<String,String> attribuMap,Map<String,RuleExpressionDTO> expressionMap,Map<String, String> errors)
 	{
-		List<RuleDTO> ruleDTOs=new ArrayList<RuleDTO>();
-		for(String ruleName:expressionMap.keySet())
+		List<RuleDTO> ruleDTOs=new ArrayList<>();
+		for(Map.Entry<String,RuleExpressionDTO> entry:expressionMap.entrySet())
 		{
+			String ruleName=entry.getKey();
 			RuleExpressionDTO ruleExpressionDTO= expressionMap.get(ruleName);
 			String conditionJson=	Json.toJson(ruleExpressionDTO.getRuleConditionDTOs()).toString();
 			
@@ -383,7 +393,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 			{
 			String condition=prepareJsonToExpression(attribuMap, ruleExpressionDTO.getRuleConditionDTOs(), new StringBuilder(),ruleExpressionDTO.getEntityPrefix()).toString();
 			ParserContext context = new ParserContext();
-			Serializable compiledExpression = MVEL.compileExpression(condition, context);
+			MVEL.compileExpression(condition, context);
 			if(!errors.containsKey(ruleName))
 			{
 			RuleDTO ruleDTO=new RuleDTO();
@@ -438,7 +448,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		List<RuleConditionDTO> childrens= ruleExpressionDTO.getChildren();
 		if(childrens==null)
 			{
-			childrens=new ArrayList<RuleConditionDTO>();
+			childrens=new ArrayList<>();
 			ruleExpressionDTO.setLeaf(null);
 			ruleExpressionDTO.setChildren(childrens);
 			}
@@ -491,7 +501,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 					 
 					 addTextToQueryExpression(expBuilder, new StringBuilder("dsl.").append(condition.getOperator()).append("(").toString());
 	                 addTextToQueryExpression(expBuilder, new StringBuilder(entityPrefix).append(".").append(collectionName).append(",").toString());
-	                 addTextToQueryExpression(expBuilder, new StringBuilder('"').append(attributeName).append(",").append(valueBuilder).toString());
+	                 addTextToQueryExpression(expBuilder, new StringBuilder("\"").append(attributeName).append(",").append(valueBuilder).toString());
 	                 addTextToQueryExpression(expBuilder, ")");
 						
 				 }
