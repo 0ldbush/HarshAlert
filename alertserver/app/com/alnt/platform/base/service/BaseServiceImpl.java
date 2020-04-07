@@ -3,6 +3,7 @@ package com.alnt.platform.base.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -110,11 +111,13 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	
 		String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
 		if (cacheConfig != null && cacheConfig.contains(cacheKeyPrefix)) {
-			return cache.getOrElseUpdate(cacheKeyPrefix+"_getBy_"+fieldName.toString()+"_"+value.toString(),() -> {
-				return this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
-					return dataList.stream().map(entity -> getMapper().entityToDTO(entity));
+			 return cache.getOrElseUpdate(cacheKeyPrefix+"_getBy_"+fieldName.toString()+"_"+value.toString(),() -> {
+				CompletionStage<List<D>> thenApplyAsync = this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
+					return dataList.stream().map(entity -> getMapper().entityToDTO(entity)).collect(Collectors.toList());
 		        }, ec.current());
-			});
+				
+				return thenApplyAsync;
+			}).thenApplyAsync(str -> { return str.stream();});
 		} else
 			return this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
 				return dataList.stream().map(entity -> getMapper().entityToDTO(entity));
