@@ -1,5 +1,6 @@
 package com.alnt.platform.base.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -127,6 +128,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 //        }, ec.current());
 //	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public CompletionStage<Optional<D>> save(RequestDetails requestDetails, D data) {
 		
@@ -136,6 +138,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 			cache.remove(cacheKeyPrefix+"_get_"+data.getId().toString());
 		} 
 		return this.getDaoRepository().save(requestDetails,  getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
+			this.afterSave(Arrays.asList(optionalData));
 			return Optional.of(getMapper().entityToDTO(optionalData.get()));
         }, ec.current());
 	}
@@ -167,6 +170,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	public CompletionStage<List<Optional<D>>> saveAll(RequestDetails requestDetails,List<D> dataList) {
 		List<E> entityList = dataList.stream().map(data -> this.getMapper().dtoToEntity(data)).collect(Collectors.toList());
 		return this.getDaoRepository().saveAll(requestDetails,entityList).thenApplyAsync(optionalData -> {
+			this.afterSave(optionalData);
 			return optionalData.stream().map(entity -> Optional.of(this.getMapper().entityToDTO(entity.get()))).collect(Collectors.toList());
         }, ec.current());
 	}
@@ -176,6 +180,11 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 		return this.getDaoRepository().delete(requestDetails, id).thenApplyAsync(optionalData -> {
             return optionalData;
         }, ec.current());
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public void afterSave(List<Optional<E>> optionals) {
+		
 	}
 
 }

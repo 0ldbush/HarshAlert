@@ -886,8 +886,8 @@ CREATE VIEW [aehsc].[TIMELINE_UI] ( "id",
 	 "username",
 	 "createdon",
 	 "int_status" ) AS SELECT
-	 concat(timeline.id,
-	timeline_chgs.id) as "id",
+	 
+	timeline_chgs.id as "id",
 	 timeline_chgs.subType as "eventtype",
 	 timeline_chgs.subType as "eventtypetext",
 	 timeline.busObjCat as "busobjcat",

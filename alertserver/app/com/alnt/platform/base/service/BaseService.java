@@ -39,4 +39,5 @@ public interface BaseService <E extends Entity, D extends DTO> {
 	CompletionStage<List<Optional<D>>> saveAll(RequestDetails requestDetails, List<D> dataList);
 
 	CompletionStage<String> delete(RequestDetails requestDetails, Long id);
+	void afterSave(List<Optional<E>> optionals);
 }
