@@ -39,6 +39,7 @@ public class PolicyRepository extends BaseRepositoryImpl<Policy> implements Base
 	
 	private Stream<Policy> getAllPolicyForGroups(EntityManager em, List<String> groups) {
 		
+		
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		CriteriaQuery<Policy> q = cb.createQuery(getDomainClass());
@@ -47,7 +48,16 @@ public class PolicyRepository extends BaseRepositoryImpl<Policy> implements Base
 		Expression<String> inExpression = c.get("policyGroup");
 		Predicate inPredicate = inExpression.in(groups);
 		
-		q.select(c).where(inPredicate);
+		Expression<Integer> intStatus = c.get("intStatus");
+		Predicate null1 = intStatus.isNull();
+		
+		Predicate intStatus0 = cb.equal(c.get("intStatus"), 0);
+		
+		Predicate predicateForActive = cb.or(null1, intStatus0);
+		
+		Predicate and = cb.and(inPredicate,predicateForActive);
+		
+		q.select(c).where(and);
 		
 		TypedQuery<Policy> query = em.createQuery(q);
 		
