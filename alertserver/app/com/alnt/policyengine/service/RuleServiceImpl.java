@@ -81,7 +81,9 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		this.parserContext = new ParserContext(parserConfiguration);
 		this.compiledExpressionCache=Caffeine.newBuilder().maximumSize(20000).build();
 	}
-
+	Map<String,String>	attributeMapMM=null;
+	
+	 List<String> entitiesMM = new ArrayList<>();
 	@Override
 	public CompletionStage<ApiResponse> uploadExcel(RequestDetails requestDetails,UploadRuleDTO uploadRuleDTO) {
 		return binaryResourceService.get(requestDetails, uploadRuleDTO.getFileId()).thenComposeAsync(resource->{
@@ -218,7 +220,6 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 										errors.put(ruleName,errorValue);
 									}
 									else {
-										System.out.println(row.getRowNum());
 										errors.put(ruleName, new StringBuilder(String.valueOf(row.getRowNum())).append("=").append(errorMsg).toString()); 
 									totalCnt++;
 									}
@@ -298,7 +299,11 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	
 	private Map<String, String> buildAttributeMap(List<String> entities ,RequestDetails requestDetails )
 	{
-		
+       if(attributeMapMM != null) {
+			
+			entities.addAll(entitiesMM);
+			return attributeMapMM;
+		}
 		  Map<String, String> attributeMap=new HashMap<String, String>();
 			class FieldData
 			{
@@ -359,7 +364,8 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		 			}
 		
 		     }
-		     
+		     entitiesMM.addAll(entities);
+			this.attributeMapMM = attributeMap;    
 		  return attributeMap;
 		  
 		

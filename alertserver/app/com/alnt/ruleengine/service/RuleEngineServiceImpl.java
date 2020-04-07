@@ -113,8 +113,8 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 
 		 
 	}
-	static List<String> attributeListMM = null;
-	static List<String> entitiesMM = new ArrayList<>();
+	 List<String> attributeListMM = null;
+	 List<String> entitiesMM = new ArrayList<>();
 	private List<String> buildAttributeList(List<String> entities,RequestDetails requestDetails )
 	{
 
@@ -186,7 +186,7 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 
 	}
 	
-	static Map<String, List<String>> attributeMap=new HashMap<String, List<String>>();
+	 Map<String, List<String>> attributeMap=new HashMap<String, List<String>>();
 	private Map<String, List<String>> buildAttributeMap(Map<String,Object> map,List<String> entities )
 	{
 		if(!attributeMap.isEmpty()) return attributeMap;
