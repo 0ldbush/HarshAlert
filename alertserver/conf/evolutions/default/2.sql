@@ -1,22 +1,23 @@
 -- !Ups
 
-INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,created_on,description,ext_id,"text",bus_function,bus_obj_cat,default_mode,display_only,follow_ons,full_namespace,help_text_url,hidden,icon,keywords,mapped_namespace,setting_act,title,doc_number) VALUES 
-(2,0,NULL,NULL,NULL,NULL,NULL,'policyengine.policy','Policies','','','update','false','','ae/policyengine/policy','',NULL,NULL,'','ae.policyengine.policy',NULL,NULL,NULL)
-,(3,0,NULL,NULL,NULL,NULL,NULL,'policyengine.ruleset','Rule Set','','','update','false','','ae/policyengine/ruleset','',NULL,NULL,'','ae.policyengine.ruleset',NULL,NULL,NULL)
-,(4,0,NULL,NULL,NULL,NULL,NULL,'policyengine.rule','Rules','','','update','false','','ae/policyengine/rule','',NULL,NULL,'','ae.policyengine.rule',NULL,NULL,NULL)
-,(7,0,NULL,NULL,NULL,NULL,NULL,'policyengine.responsecode','Response Codes','','','update','false','','ae/policyengine/responsecode','',NULL,NULL,'','ae.policyengine.responsecode',NULL,NULL,NULL)
-,(8,0,NULL,NULL,NULL,NULL,NULL,'policyengine.risk','Risk','','','update','false','','ae/policyengine/risk','',NULL,NULL,'','ae.policyengine.risk',NULL,NULL,NULL)
+INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,created_on,description,ext_id,"text",bus_function,bus_obj_cat,default_mode,display_only,follow_ons,full_namespace,help_text_url,hidden,icon,keywords,mapped_namespace,setting_act,title,doc_number,package_name) VALUES 
+(2,0,NULL,NULL,NULL,NULL,NULL,'policyengine.policy','Policies','','','update','false','','ae/policyengine/policy','',NULL,NULL,'','ae.policyengine.policy',NULL,NULL,NULL,'policyengine')
+,(3,0,NULL,NULL,NULL,NULL,NULL,'policyengine.ruleset','Rule Set','','','update','false','','ae/policyengine/ruleset','',NULL,NULL,'','ae.policyengine.ruleset',NULL,NULL,NULL,'policyengine')
+,(4,0,NULL,NULL,NULL,NULL,NULL,'policyengine.rule','Rules','','','update','false','','ae/policyengine/rule','',NULL,NULL,'','ae.policyengine.rule',NULL,NULL,NULL,'policyengine')
+,(7,0,NULL,NULL,NULL,NULL,NULL,'policyengine.responsecode','Response Codes','','','update','false','','ae/policyengine/responsecode','',NULL,NULL,'','ae.policyengine.responsecode',NULL,NULL,NULL,'policyengine')
+,(8,0,NULL,NULL,NULL,NULL,NULL,'policyengine.risk','Risk','','','update','false','','ae/policyengine/risk','',NULL,NULL,'','ae.policyengine.risk',NULL,NULL,NULL,'policyengine')
 ;
-INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,created_on,description,ext_id,"text",bus_function,bus_obj_cat,default_mode,display_only,follow_ons,full_namespace,help_text_url,hidden,icon,keywords,mapped_namespace,setting_act,title,doc_number) VALUES 
-(9,0,NULL,NULL,NULL,NULL,NULL,'policyengine.mitigationcontrol','Mitigation Control','','','update','false','','ae/policyengine/mitigationcontrol','',NULL,NULL,'','ae.policyengine.mitigationcontrol',NULL,NULL,NULL)
-,(11,0,NULL,NULL,NULL,NULL,NULL,'setting.classdef','Class Definition',NULL,NULL,'update','false',NULL,'platform/view/classdef',NULL,NULL,NULL,NULL,'platform.view.classdef','false',NULL,NULL)
-,(12,0,NULL,NULL,NULL,NULL,NULL,'setting.list','List',NULL,NULL,'update','false',NULL,'platform/view/lists',NULL,NULL,NULL,NULL,'platform.view.lists','false',NULL,NULL)
-,(13,0,NULL,NULL,NULL,NULL,NULL,'setting.user','User',NULL,NULL,'update','false',NULL,'ae/setting/user',NULL,NULL,NULL,NULL,'ae.setting.user','false',NULL,NULL)
-,(14,0,NULL,NULL,NULL,NULL,NULL,'setting.role','Role',NULL,NULL,'update','false',NULL,'ae/setting/role',NULL,NULL,NULL,NULL,'ae.setting.role','false',NULL,NULL)
-,(15,0,NULL,NULL,NULL,NULL,NULL,'setting.policytype','Policy Type',NULL,NULL,'update','false',NULL,'ae/setting/policytype',NULL,NULL,NULL,NULL,'ae.setting.policytype','false',NULL,NULL)
-,(16,0,NULL,NULL,NULL,NULL,NULL,'setting.policygroup','Policy Group',NULL,NULL,'update','false',NULL,'ae/setting/policygroup',NULL,NULL,NULL,NULL,'ae.setting.policygroup','false',NULL,NULL)
-,(17,0,NULL,NULL,NULL,NULL,NULL,'setting.docnumberrange','Document Number Range',NULL,NULL,'update','false',NULL,'ae/setting/docnumberrange',NULL,NULL,NULL,NULL,'ae.setting.docnumberrange','false',NULL,NULL)
+INSERT INTO aehsc.activity (id,int_status,changed_by,changed_on,created_by,created_on,description,ext_id,"text",bus_function,bus_obj_cat,default_mode,display_only,follow_ons,full_namespace,help_text_url,hidden,icon,keywords,mapped_namespace,setting_act,title,doc_number,package_name) VALUES 
+(9,0,NULL,NULL,NULL,NULL,NULL,'policyengine.mitigationcontrol','Mitigation Control','','','update','false','','ae/policyengine/mitigationcontrol','',NULL,NULL,'','ae.policyengine.mitigationcontrol',NULL,NULL,NULL,'policyengine')
+,(11,0,NULL,NULL,NULL,NULL,NULL,'setting.classdef','Class Definition',NULL,NULL,'update','false',NULL,'platform/view/classdef',NULL,NULL,NULL,NULL,'platform.view.classdef','false',NULL,NULL,'platform')
+,(12,0,NULL,NULL,NULL,NULL,NULL,'setting.list','List',NULL,NULL,'update','false',NULL,'platform/view/lists',NULL,NULL,NULL,NULL,'platform.view.lists','false',NULL,NULL,'platform')
+,(13,0,NULL,NULL,NULL,NULL,NULL,'setting.user','User',NULL,NULL,'update','false',NULL,'ae/setting/user',NULL,NULL,NULL,NULL,'ae.setting.user','false',NULL,NULL,'setting')
+,(14,0,NULL,NULL,NULL,NULL,NULL,'setting.role','Role',NULL,NULL,'update','false',NULL,'ae/setting/role',NULL,NULL,NULL,NULL,'ae.setting.role','false',NULL,NULL,'setting')
+,(15,0,NULL,NULL,NULL,NULL,NULL,'setting.policytype','Policy Type',NULL,NULL,'update','false',NULL,'ae/setting/policytype',NULL,NULL,NULL,NULL,'ae.setting.policytype','false',NULL,NULL,'setting')
+,(16,0,NULL,NULL,NULL,NULL,NULL,'setting.policygroup','Policy Group',NULL,NULL,'update','false',NULL,'ae/setting/policygroup',NULL,NULL,NULL,NULL,'ae.setting.policygroup','false',NULL,NULL,'setting')
+,(17,0,NULL,NULL,NULL,NULL,NULL,'setting.docnumberrange','Document Number Range',NULL,NULL,'update','false',NULL,'ae/setting/docnumberrange',NULL,NULL,NULL,NULL,'ae.setting.docnumberrange','false',NULL,NULL,'setting')
 ;
+
 
 INSERT INTO aehsc.class_def (id,int_status,bus_obj_cat,ext_id,field_in_parent,parent_bus_obj_cat,ref_field,"text",is_rule_parent,changed_by,changed_on,created_by,created_on,description,"type",class_name) VALUES 
 (1,0,'Request','request',NULL,NULL,NULL,'Request','true',NULL,NULL,NULL,NULL,NULL,NULL,NULL)
@@ -56,6 +57,7 @@ INSERT INTO aehsc.field_def (id,class_ext_id,do_not_copy,field_name,is_base_clas
 ,(15,'role','false','displayRoleName','false','false','false','false','true','false','false','false','Display Role Name','false',NULL,NULL,NULL,NULL,NULL)
 ,(16,'role','false','evaluationStatus','false','false','false','false','true','false','false','false','Evaluation Status','false',NULL,NULL,NULL,NULL,NULL)
 ;
+
 
 INSERT INTO aehsc.lists (id,int_status,changed_by,changed_on,created_by,created_on,description,code) VALUES  
 (1,0,NULL,NULL,NULL,NULL,'RESPONSEACTIONTYPES','RESPONSEACTIONTYPES')
@@ -157,6 +159,7 @@ INSERT INTO aehsc.doc_number_range (id,changed_by,changed_on,created_by,created_
 ,(8,NULL,NULL,NULL,NULL,0,NULL,NULL,8,NULL,'User','false','false','false',NULL,NULL,NULL,'false','USR-999999','USR-NNNNNN','USR-000001',11,'false','true','Never')
 ,(9,NULL,NULL,NULL,NULL,0,NULL,NULL,9,NULL,'PolicyGroup','false','false','false',NULL,NULL,NULL,'false','PGR-999999','PGR-NNNNNN','PGR-000001',11,'false','true','Never')
 ;
+
 
 
 INSERT INTO aehsc.currency (id,int_status,description,ext_id,"text",country,decimals,flagicon,peggedcurrency,symbol) VALUES 
