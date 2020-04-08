@@ -25,7 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
+import com.alnt.platform.base.request.Criteria;
 import com.alnt.platform.base.request.RequestDetails;
+import com.alnt.platform.base.request.SearchCriteria;
+import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.platform.base.service.BaseServiceImpl;
 import com.alnt.platform.core.classdef.domain.dto.ClassDefDTO;
 import com.alnt.platform.core.classdef.domain.dto.FieldDefDTO;
@@ -386,9 +389,49 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 //			
 //		}
 		
-//		List<String> pgs  = new ArrayList<String>();		
+//		List<String> pgs  = new ArrayList<String>();
+		 
+		 List<Object> obs = new ArrayList<Object>();
+		 for(String p : policyGroup) {
+			 obs.add(p);
+		 }
+		 SearchCriteria searchParams = new SearchCriteria();
+			List<Criteria> filterCriteria= new ArrayList<Criteria>();
+			Criteria criteria1 = new Criteria();
+			criteria1.setFieldName("extId");
+			criteria1.setOperator("in");
+			criteria1.setValueList(obs);
+			filterCriteria.add(criteria1);
+			searchParams.setFilterCriteria(filterCriteria);
 		
-		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, policyGroup);
+			
+			List<PolicyGroupDTO> pgtos = null;
+	try {
+		ApiResponse pgs  = pgService.findAll(requestDetails, searchParams).toCompletableFuture().get();
+		System.out.println(pgs);
+		pgtos = (List<PolicyGroupDTO>) pgs.getData();
+		
+		if(pgtos.isEmpty()) throw new Exception("Error while retrieving Policy Group " + policyGroup);
+		
+	} catch (Exception e) {
+		
+		e.printStackTrace();
+		throw new RuntimeException("Error while retrieving Policy Group " + policyGroup);
+	}
+	
+	List<String> collect = pgtos.parallelStream().map(a -> a.getExtId()).collect(Collectors.toList());
+	
+		
+//		pgs.thenApplyAsync(response -> {
+//			
+//			if(response.getData() != null ) {
+//				
+//			}
+//			return null;
+//		});
+		
+		
+		CompletionStage<Stream<PolicyDTO>> allPolicyForGroups = policyService.getAllPolicyForGroups(requestDetails, collect);
 		CompletionStage<List<DefaultOutput>> thenApplyAsync = allPolicyForGroups.thenApplyAsync(policies -> {
 			List<DefaultOutput> allListDO = new ArrayList<>();
 			policies.parallel().forEach(policy -> {
