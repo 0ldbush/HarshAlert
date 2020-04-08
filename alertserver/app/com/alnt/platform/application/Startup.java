@@ -16,13 +16,14 @@ public class Startup {
 	private final ActorSystem actorSystem;
 	private final ExecutionContext executionContext;
 	
-	@Inject
+	
 	private RuleService ruleService;
 	@Inject
-	public Startup(ActorSystem actorSystem, ExecutionContext executionContext) {
+	public Startup(ActorSystem actorSystem, ExecutionContext executionContext,RuleService ruleService) {
 		super();
 		this.actorSystem = actorSystem;
 	    this.executionContext = executionContext;
+	    this.ruleService=ruleService;
 		this.init();
 	}
 	

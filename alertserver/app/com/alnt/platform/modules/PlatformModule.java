@@ -7,6 +7,9 @@ import com.alnt.platform.core.configsetting.service.ConfigSettingService;
 import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
 import com.alnt.platform.core.docnumberrange.service.DocNumberRangeService;
 import com.alnt.platform.core.docnumberrange.service.DocNumberRangeServiceImpl;
+import com.alnt.platform.core.messagemaster.service.MessageMasterService;
+import com.alnt.platform.core.messagemaster.service.MessageMasterServiceImpl;
+import com.alnt.platform.core.messagemaster.service.MessageProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
@@ -34,6 +37,7 @@ public class PlatformModule extends AbstractModule {
     	bind(ConfigSettingService.class).annotatedWith(Names.named(BASE)).to(ConfigSettingServiceImpl.class);
 		bind(ConfigSettingService.class).annotatedWith(Names.named(LOCAL_CACHE)).to(ConfigSettingLocalCachedServiceImpl.class);
 		bind(DocNumberRangeService.class).annotatedWith(Names.named(BASE)).to(DocNumberRangeServiceImpl.class);
+		bind(MessageProvider.class).annotatedWith(Names.named(BASE)).to(MessageProvider.class).asEagerSingleton();
 //    	bind(UpdateEventListener.class).to(UpdateEventListener.class).asEagerSingleton();
 		bind(Startup.class).asEagerSingleton();
 		

@@ -1,12 +1,13 @@
 package com.alnt.platform.core.messagemaster.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import com.alnt.platform.base.domain.Entity;
+import org.hibernate.annotations.SQLDelete;
 
+import javax.persistence.*;
+
+@javax.persistence.Entity
+@Table(name = "MESSAGE_MASTER_BUTTON")
+@SQLDelete(sql = "UPDATE MESSAGE_MASTER_BUTTON SET INT_STATUS = 3 WHERE ID = ?")
 public class MessageMasterButton extends Entity{
 
 	private static final long serialVersionUID = 1L;

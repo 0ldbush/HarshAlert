@@ -1,26 +1,23 @@
 package com.alnt.platform.core.messagemaster.domain;
 
+import com.alnt.platform.base.domain.BaseMasterEntity;
+import com.alnt.platform.base.persistence.CacheConstants;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
-
-import com.alnt.platform.base.domain.BaseMasterEntity;
-import com.alnt.platform.base.persistence.CacheConstants;
-
+@Entity
+@Table(name = "MESSAGE_MASTER")
+@SQLDelete(sql = "UPDATE MESSAGE_MASTER SET INT_STATUS = 3 WHERE ID = ?")
 public class MessageMaster extends BaseMasterEntity {
 	
 	private static final long serialVersionUID = 1L;
