@@ -411,12 +411,12 @@ public class RuleEngineServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implem
 		System.out.println(pgs);
 		pgtos = (List<PolicyGroupDTO>) pgs.getData();
 		
-		if(pgtos.isEmpty()) throw new Exception("Error while retrieving Policy Group " + policyGroup);
+		if(pgtos.isEmpty()) throw new Exception();
 		
 	} catch (Exception e) {
 		
 		e.printStackTrace();
-		throw new RuntimeException("Error while retrieving Policy Group " + policyGroup);
+		throw new RuntimeException("Error while retrieving Policy Group, may not exists or inactive " + policyGroup);
 	}
 	
 	List<String> collect = pgtos.parallelStream().map(a -> a.getExtId()).collect(Collectors.toList());
