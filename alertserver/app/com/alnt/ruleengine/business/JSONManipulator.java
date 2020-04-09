@@ -13,15 +13,8 @@ import javax.inject.Singleton;
 
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.core.configsetting.domain.dto.ConfigSettingDTO;
-import com.alnt.platform.core.configsetting.service.ConfigSettingLocalCachedServiceImpl;
 import com.alnt.platform.core.configsetting.service.ConfigSettingService;
-import com.alnt.platform.core.configsetting.service.ConfigSettingServiceImpl;
-import com.alnt.policyengine.domain.Rule;
-import com.alnt.policyengine.domain.dto.RuleDTO;
-import com.alnt.ruleengine.service.RuleEngineService;
 import com.jayway.jsonpath.DocumentContext;
-
-import play.libs.concurrent.HttpExecutionContext;
 
 @Singleton
 public class JSONManipulator {
@@ -30,7 +23,7 @@ public class JSONManipulator {
 	ConfigSettingService configSettingService;
 	
 	@Inject
-    public JSONManipulator(@Named("localcache") ConfigSettingService cs) {
+    public JSONManipulator(ConfigSettingService cs) {
 		
 		this.configSettingService = cs;
 	}
@@ -42,10 +35,10 @@ public class JSONManipulator {
 
 		try {
 			
-			CompletionStage<List<ConfigSettingDTO>> byCached = ((ConfigSettingLocalCachedServiceImpl)configSettingService).getByCached(requestDetails, "groupName", "SOD");
+			CompletionStage<Stream<ConfigSettingDTO>> byCached = configSettingService.getBy(requestDetails, "groupName", "SOD");
 
 			
-			List<ConfigSettingDTO> list = byCached.toCompletableFuture().get();
+			List<ConfigSettingDTO> list = byCached.toCompletableFuture().get().collect(Collectors.toList());
 			
 			List<ConfigSettingDTO> collect = list.stream().filter(e -> {
 				return  e.getExtId().equals("marked_for_deletion_expr");

@@ -35,6 +35,7 @@ lazy val root = (project in file(".")).
 	  evolutions,
 	  javaJdbc,
 	  guice,
+	  cacheApi,
 	  caffeine,
 	  //"com.h2database" % "h2" % "1.4.199",
 	  "org.hibernate" % "hibernate-core" % "5.4.10.Final",
@@ -77,11 +78,13 @@ lazy val root = (project in file(".")).
       "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
       "org.apache.logging.log4j" % "log4j-core" % "2.4.1",
 
+	  "com.github.karelcemus" %% "play-redis" % "2.6.0",
+	  
 	  
 	//json
 	"com.jayway.jsonpath" % "json-path" % "2.4.0",
 	
-	"org.flywaydb" %% "flyway-play" % "6.0.0",
+	//"org.flywaydb" %% "flyway-play" % "6.0.0",
 	
 	"org.mockito" % "mockito-junit-jupiter" % "3.3.3" % Test
 	

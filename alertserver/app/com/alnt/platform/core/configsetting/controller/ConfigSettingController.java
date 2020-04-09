@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class ConfigSettingController extends BaseController<ConfigSetting, ConfigSettingDTO> {
 
     @Inject
-    public ConfigSettingController(@Named("base") ConfigSettingService configSettingService, HttpExecutionContext ec) {
+    public ConfigSettingController(ConfigSettingService configSettingService, HttpExecutionContext ec) {
         super(configSettingService, ec, ConfigSetting.class, ConfigSettingDTO.class);
     }
 }

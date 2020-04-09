@@ -18,9 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alnt.platform.base.domain.BaseSocialEntity;
-import com.alnt.platform.base.domain.dto.BaseSocialDTO;
 import com.alnt.platform.base.request.RequestDetails;
-import com.alnt.platform.base.service.BaseLocalCachedServiceImpl;
 import com.alnt.platform.core.classdef.domain.ClassDef;
 import com.alnt.platform.core.classdef.domain.dto.ClassDefDTO;
 import com.alnt.platform.core.classdef.service.ClassDefService;

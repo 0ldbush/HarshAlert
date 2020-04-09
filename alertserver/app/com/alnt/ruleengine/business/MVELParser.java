@@ -37,9 +37,7 @@ public class MVELParser<INPUT_DATA> {
 	
     public boolean parseMvelExpression( RuleDTO rule, INPUT_DATA inputObjects){
         try {
-        	Serializable compiledExpression = (Serializable) ruleService.getCompiledExpressionCache().get(rule.getId().toString(), (key) -> {
-        		return MVEL.compileExpression(rule.getCondition(), (ParserContext)ruleService.getCompiledExpressionCache().getIfPresent("parserContext"));
-        	});
+        	Serializable compiledExpression = (Serializable) ruleService.getCompiledExpression(rule);
 
     		Object executeExpression = MVEL.executeExpression(compiledExpression, inputObjects);
             return executeExpression != null ? (Boolean)executeExpression : false;

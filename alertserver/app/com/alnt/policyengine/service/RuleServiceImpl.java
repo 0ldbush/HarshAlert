@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
@@ -52,10 +53,9 @@ import com.alnt.policyengine.domain.dto.RuleExpressionDTO;
 import com.alnt.policyengine.domain.dto.UploadRuleDTO;
 import com.alnt.ruleengine.mapper.RuleMapper;
 import com.alnt.ruleengine.repository.RulesRepository;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.monitorjbl.xlsx.StreamingReader;
 
+import play.cache.SyncCacheApi;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -68,7 +68,6 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	
 	private ListsService listsService;
 	private  ParserContext parserContext ;
-	private  Cache<String, Object> compiledExpressionCache ;
 	
 	@Inject
 	public RuleServiceImpl(HttpExecutionContext ec, RulesRepository repository,BinaryResourceService binaryResourceService,ListsService listsService,
@@ -77,10 +76,12 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		this.binaryResourceService=binaryResourceService;
 		this.listsService=listsService;
 		this.classDefService=classDefService;
+		this.initializeParserContext();
+	}
+	private void initializeParserContext() {
 		ParserConfiguration parserConfiguration = new ParserConfiguration();
 		parserConfiguration.setClassLoader(Thread.currentThread().getContextClassLoader());
 		this.parserContext = new ParserContext(parserConfiguration);
-		this.compiledExpressionCache=Caffeine.newBuilder().maximumSize(20000).build();
 	}
 	Map<String,String>	attributeMapMM=null;
 	
@@ -531,7 +532,8 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
         if (StringUtils.isBlank(text)) return expBuilder;
         return expBuilder.append(" ").append(text);
     }
-   
+    private static final String RULE_COMPILED_EXPR_CACHE_PREFIX = "RULE_COMPILED_EXPR_CACHE_";
+    
 	@Override
 	public void afterSave(List<Optional<Rule>> optionals) {
 		optionals.parallelStream().forEach(optional -> {
@@ -539,7 +541,7 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 				Rule rule = optional.get();
 				if (rule.getIntStatus() == INT_STATUS.ACTIVE.getValue()) {
 					Serializable compiledExpression = MVEL.compileExpression(rule.getCondition(),parserContext);
-					compiledExpressionCache.put(rule.getId().toString(), compiledExpression);
+					getCache().set(RULE_COMPILED_EXPR_CACHE_PREFIX+rule.getId().toString(), compiledExpression);
 				}
 			}
 		});
@@ -551,12 +553,15 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 		requestDetails.setTenantName("master");
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setApplyChangedOnSort(false);
-		compiledExpressionCache.put("parserContext", parserContext);
+		if(parserContext == null) {
+			this.initializeParserContext();
+		}
+		getCache().set(RULE_COMPILED_EXPR_CACHE_PREFIX+"parserContext", parserContext);
 		this.getDaoRepository().list(requestDetails).thenApplyAsync(stream -> {
 			stream.parallel().forEach(rule -> {
 				if (rule.getIntStatus() == INT_STATUS.ACTIVE.getValue()) {
 					Serializable compiledExpression = MVEL.compileExpression(rule.getCondition(), parserContext);
-					compiledExpressionCache.put(rule.getId().toString(), compiledExpression);
+					getCache().set(RULE_COMPILED_EXPR_CACHE_PREFIX+rule.getId().toString(), compiledExpression);
 				}
 
 			});
@@ -565,8 +570,23 @@ public class RuleServiceImpl extends BaseServiceImpl<Rule, RuleDTO> implements R
 	}
 
 	@Override
-	public Cache<String, Object> getCompiledExpressionCache() {
-		return compiledExpressionCache;
+	public Serializable getCompiledExpression(RuleDTO rule) {
+		
+//		return (Serializable) compiledExpressionCache.getOrElseUpdate(RULE_COMPILED_EXPR_CACHE_PREFIX+rule.getId().toString(), () -> {
+//			return MVEL.compileExpression(rule.getCondition(), parserContext);
+//		});
+		
+		try {
+			return (Serializable) getCache().getOrElseUpdate(RULE_COMPILED_EXPR_CACHE_PREFIX+rule.getId().toString(), () -> {
+				
+				return CompletableFuture.supplyAsync(() -> { return MVEL.compileExpression(rule.getCondition(), parserContext);});
+			}).toCompletableFuture().get();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
    

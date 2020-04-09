@@ -13,6 +13,8 @@ import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.response.ApiResponse;
 
+import play.cache.AsyncCacheApi;
+
 
 public interface BaseService <E extends Entity, D extends DTO> {
 	
@@ -40,4 +42,6 @@ public interface BaseService <E extends Entity, D extends DTO> {
 
 	CompletionStage<String> delete(RequestDetails requestDetails, Long id);
 	void afterSave(List<Optional<E>> optionals);
+	
+	AsyncCacheApi getCache();
 }

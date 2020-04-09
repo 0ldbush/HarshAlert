@@ -3,11 +3,11 @@ package com.alnt.platform.base.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +21,7 @@ import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.response.ApiResponse;
 import com.typesafe.config.ConfigFactory;
 
+import play.cache.NamedCache;
 import play.cache.AsyncCacheApi;
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -33,8 +34,13 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	protected BaseMapper<D,E> mapper;
     protected HttpExecutionContext ec;
     
-    @Inject
-    protected AsyncCacheApi cache;
+    @com.google.inject.Inject(optional = true)
+    @NamedCache("play")
+    private AsyncCacheApi cache;
+    
+    @com.google.inject.Inject(optional = true)
+    @NamedCache("redis")
+    private AsyncCacheApi redisCache;
    
     static final int MAX_SIZE = 1000;
     
@@ -44,7 +50,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
         this.ec = ec;
         this.repository = repository;
         this.mapper = mapper;
-        this.cacheConfig= ConfigFactory.load().getStringList("play.alert.cache.config.entities");
+        this.cacheConfig= ConfigFactory.load().getStringList("play.cache.enabled.entities");
        
     }
     
@@ -93,7 +99,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
 	if(cacheConfig!=null && cacheConfig.contains(cacheKeyPrefix))
 	{
-		return cache.getOrElseUpdate(cacheKeyPrefix+"_get_"+id.toString(),() -> {
+		return getCache().getOrElseUpdate(cacheKeyPrefix+"_get_"+id.toString(),() -> {
 			return this.getDaoRepository().get(requestDetails, id).thenApplyAsync(optionalData -> {
 				 return Optional.of(getMapper().entityToDTO(optionalData.get()));
 	        }, ec.current());
@@ -111,7 +117,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 	
 		String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
 		if (cacheConfig != null && cacheConfig.contains(cacheKeyPrefix)) {
-			 return cache.getOrElseUpdate(cacheKeyPrefix+"_getBy_"+fieldName.toString()+"_"+value.toString(),() -> {
+			 return getCache().getOrElseUpdate(cacheKeyPrefix+"_getBy_"+fieldName.toString()+"_"+value.toString(),() -> {
 				CompletionStage<List<D>> thenApplyAsync = this.getDaoRepository().getBy(requestDetails, fieldName, value).thenApplyAsync(dataList -> {
 					return dataList.stream().map(entity -> getMapper().entityToDTO(entity)).collect(Collectors.toList());
 		        }, ec.current());
@@ -138,7 +144,7 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 		String cacheKeyPrefix=repository.getDomainClass().getSimpleName();
 		if(cacheConfig!=null && cacheConfig.contains(cacheKeyPrefix) && cache != null  && data.getId() != null)
 		{
-			cache.remove(cacheKeyPrefix+"_get_"+data.getId().toString());
+			getCache().remove(cacheKeyPrefix+"_get_"+data.getId().toString());
 		} 
 		return this.getDaoRepository().save(requestDetails,  getMapper().dtoToEntity(data)).thenApplyAsync(optionalData -> {
 			this.afterSave(Arrays.asList(optionalData));
@@ -190,4 +196,8 @@ public abstract class BaseServiceImpl<E extends Entity, D extends DTO> implement
 		
 	}
 
+	public AsyncCacheApi getCache() {
+		return cache;
+//		return redisCache != null ? redisCache : cache;
+	}
 }
