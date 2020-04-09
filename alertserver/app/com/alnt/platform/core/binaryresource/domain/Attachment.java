@@ -31,6 +31,9 @@ public class Attachment extends BaseSocialEntity {
 
 	@Column(name = "SHARED")
 	private boolean shared;
+	  
+	@Column(name="MIME_TYPE")
+	private String mimeType;
 
 	@ManyToOne(targetEntity = AttachmentType.class, optional = true, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "TYPE", referencedColumnName = "EXT_ID", foreignKey = @ForeignKey, insertable = false, updatable = false)
@@ -75,5 +78,15 @@ public class Attachment extends BaseSocialEntity {
 	public void setAttachmentType(AttachmentType attachmentType) {
 		this.attachmentType = attachmentType;
 	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
+	
+	
 
 }

@@ -21,6 +21,8 @@ public class AttachmentDTO extends BaseSocialDTO {
 	
 	private boolean shared;
 	
+	private String mimeType;
+	
 	private AttachmentTypeDTO attachmentType;
 
 	public Long getBinaryResourceId() {
@@ -61,6 +63,16 @@ public class AttachmentDTO extends BaseSocialDTO {
 
 	public void setAttachmentType(AttachmentTypeDTO attachmentType) {
 		this.attachmentType = attachmentType;
-	}	
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
+	
+	
 
 }
