@@ -73,6 +73,7 @@ CREATE TABLE aehsc.attachment (
     ext_id character varying(50),
     text character varying(255),
     type character varying(50),
+	mime_type  character varying(255),
     binary_resource_id bigint,
     shared bit,
     source_file character varying(255),
