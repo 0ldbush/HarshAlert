@@ -235,15 +235,4 @@ public class QuerySpecification<T> implements Specification<T> {
 		}
 		return date;
 	}
-	
-
-
-	public static void main(String[] args) {
-		List<Long> lstLong = new ArrayList<>();
-		lstLong.add(1l);
-		lstLong.add(2l);
-		lstLong.add(3l);
-		
-		System.out.println(lstLong.toArray(new Long[lstLong.size()]));
-	}
 }

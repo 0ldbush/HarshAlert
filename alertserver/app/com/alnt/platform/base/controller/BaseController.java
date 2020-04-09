@@ -1,6 +1,7 @@
 package com.alnt.platform.base.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -13,11 +14,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.alnt.access.user.domain.dto.UserDTO;
 import com.alnt.access.user.service.UserService;
+import com.alnt.platform.application.security.hashing.HashUtils;
 import com.alnt.platform.application.security.jwt.Attrs;
 import com.alnt.platform.application.security.jwt.VerifiedJwt;
+import com.alnt.platform.base.domain.BaseEntity;
 import com.alnt.platform.base.domain.Entity;
+import com.alnt.platform.base.domain.dto.BaseDTO;
 import com.alnt.platform.base.domain.dto.DTO;
+import com.alnt.platform.base.exception.BaseBusinessException;
+import com.alnt.platform.base.exception.type.ErrorType;
 import com.alnt.platform.base.request.RequestDetails;
 import com.alnt.platform.base.request.SearchCriteria;
 import com.alnt.platform.base.request.SortBy;
@@ -25,6 +32,7 @@ import com.alnt.platform.base.response.ApiMessage;
 import com.alnt.platform.base.response.ApiMessageType;
 import com.alnt.platform.base.response.ApiResponse;
 import com.alnt.platform.base.service.BaseService;
+import com.alnt.platform.core.messagemaster.service.MessageProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
@@ -77,10 +85,13 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 																															// remove this
 		if (jwt != null) {
 			requestDetails.setTenantName(jwt.getTenant());
-			if (jwt != null && jwt.getUserId() != null) {
-				return userService.get(requestDetails, jwt.getUserId()).thenApplyAsync(userO -> {
-					if (userO.isPresent()) {
-						requestDetails.setUser(userO.get());
+			if (jwt != null && jwt.getUsername() != null) {
+				return userService.getBy(requestDetails, "userName", jwt.getUsername()).thenApplyAsync(userO -> {
+					List<UserDTO> users = userO.collect(Collectors.toList());
+					if (users !=null && users.size() > 0 ) {
+						requestDetails.setUser(users.get(0));
+					}else {
+						throw new BaseBusinessException(ErrorType.INVALID_CREDENTIAL);
 					}
 					return requestDetails;
 				});
@@ -172,7 +183,9 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 		D resource = Json.fromJson(json, getDTOClass());
 		return fetchRequestDetails(request).thenComposeAsync(requestDetails -> {
 			return getService().save(requestDetails, resource).thenApplyAsync(optionalResource -> {
-				return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, null)))).orElseGet(Results::notFound);
+				ApiMessage apiMessage = MessageProvider.getMessage(requestDetails, ApiMessageType.INFO, "INF110001", null);
+				return optionalResource.map(saveddata -> ok(Json.toJson(new ApiResponse(Boolean.TRUE, saveddata, getSuccessMessages(requestDetails, optionalResource.isPresent()?optionalResource.get():null)))))
+						.orElseGet(Results::notFound);
 			}, ec.current());
 		}, ec.current());
 		}
@@ -197,6 +210,19 @@ public abstract class BaseController<E extends Entity, D extends DTO> extends Co
 				return ok(Json.toJson(new ApiResponse(Boolean.TRUE, null,messageList )));
 			}, ec.current());
 		}, ec.current());
+	}
+	
+	private List<ApiMessage> getSuccessMessages(RequestDetails requestDetails, Object data ){
+		String infoCode = "INF110001";
+		if(data != null && data instanceof BaseDTO) {
+			BaseDTO baseDto = (BaseDTO)data;
+			if(baseDto.getIntStatus().equals(BaseEntity.INT_STATUS.DELETED.getValue())) {
+				infoCode = "INF110002";
+			}
+		}
+		
+		ApiMessage apiMessage = MessageProvider.getMessage(requestDetails, ApiMessageType.INFO, infoCode, null);
+		return Collections.singletonList(apiMessage);
 	}
 
 }

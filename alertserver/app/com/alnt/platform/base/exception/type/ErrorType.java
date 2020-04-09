@@ -31,6 +31,7 @@ public class ErrorType implements Serializable, EnumerationType{
 	/*
 	 * Error codes 11001 need to be used for business exceptions
 	 */
+	public static final ErrorType INVALID_CREDENTIAL  = new ErrorType("INVALID_CREDENTIAL","ERR11000", "This token is invalid");
 	public static final ErrorType USER_NOT_FOUND  = new ErrorType("USER_NOT_FOUND","ERR11001", "User does not exist"); 
     public static final ErrorType INVALID_PASSWORD  = new ErrorType("INVALID_PASSWORD", "ERR11002","Invalid password");
     public static final ErrorType EXCEL_INVALID_INDEX  = new ErrorType("EXCEL_INVALID_INDEX", "ERR11003","SR No index is not in sequence");
